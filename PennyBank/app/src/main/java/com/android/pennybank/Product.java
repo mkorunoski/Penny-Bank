@@ -50,7 +50,7 @@ public class Product {
             }
         }
 
-        if (Logger.enabled) {
+        if (Logger.s_enabled) {
             Log.i("*Product: Product()", "The end date is: " + m_endDate.getTime().toString());
         }
     }
@@ -84,7 +84,7 @@ public class Product {
             }
         }
 
-        if (Logger.enabled) {
+        if (Logger.s_enabled) {
             Log.i("*Product: Product()", "The deposit is: " + String.valueOf(m_deposit));
         }
     }
