@@ -6,51 +6,73 @@ import android.util.*;
 import java.util.Calendar;
 
 /**
- * This class represents the product that the user wants to save money for.
+ * This class represents the product that the user wants to save money for
  */
 public class Product {
 
     public enum FREQUENCY {
-        DAILY,  /// The user will deposit daily
-        WEEKLY, /// The user will deposit weekly
-        MONTHLY /// The user will deposit monthly
+        DAILY(1),   /// The user will deposit daily
+        WEEKLY(2),  /// The user will deposit weekly
+        MONTHLY(3); /// The user will deposit monthly
+
+        private int value;
+
+        FREQUENCY(int value) {
+            this.value = value;
+        }
+
+        int getValue() {
+            return value;
+        }
     }
 
     public enum METHOD {
-        BY_DEPOSIT, /// Saving based upon the specified deposit value
-        BY_END_DATE /// Saving based upon the date when the user wants to purchase the product
+        BY_DEPOSIT(1), /// Saving based upon the specified deposit value
+        BY_END_DATE(2); /// Saving based upon the date when the user wants to purchase the product
+
+        private int value;
+
+        METHOD(int value) {
+            this.value = value;
+        }
+
+        int getValue() {
+            return value;
+        }
     }
 
-    private String m_name;
-    private Image m_image;
-    private float m_price;
-    private FREQUENCY m_frequency;
-    private METHOD m_method;
-    private float m_deposit;
-    private float m_saving;
-    private Calendar m_startDate;
-    private Calendar m_endDate;
+    private int id;
+    private String name;
+    private String image;
+    private float price;
+    private FREQUENCY frequency;
+    private METHOD method;
+    private float deposit;
+    private float savings;
+    private Calendar startDate;
+    private Calendar endDate;
 
-//     Otkako ke se implementira servisot.
-//     private Alarm m_alram;
+//  Otkako ke se implementira servisot.
+//  private Alarm m_alram;
 
     /**
      * Constructor that initializes based upon the deposit value
      *
-     * @param m_name      Product name
-     * @param m_image     Product image
-     * @param m_price     Product price
-     * @param m_frequency Deposit frequency
-     * @param m_deposit   Deposit value
+     * @param name      Product name
+     * @param image     Product image
+     * @param price     Product price
+     * @param frequency Deposit frequency
+     * @param deposit   Deposit value
      */
-    public Product(String m_name, Image m_image, float m_price, FREQUENCY m_frequency, float m_deposit) {
-        this.m_name = m_name;
-        this.m_image = m_image;
-        this.m_price = m_price;
-        this.m_frequency = m_frequency;
-        this.m_method = METHOD.BY_DEPOSIT;
-        this.m_deposit = m_deposit;
-        this.m_saving = 0.0f;
+    public Product(String name, String image, float price, FREQUENCY frequency, float deposit) {
+        this.id = (name + String.valueOf(price)).hashCode();
+        this.name = name;
+        this.image = image;
+        this.price = price;
+        this.frequency = frequency;
+        this.method = METHOD.BY_DEPOSIT;
+        this.deposit = deposit;
+        this.savings = 0.0f;
 
         calcEndDate();
     }
@@ -58,85 +80,106 @@ public class Product {
     /**
      * Constructor that initializes based upon the date when the user wants to purchase the product
      *
-     * @param m_name      Product name
-     * @param m_image     Product image
-     * @param m_price     Product price
-     * @param m_frequency Deposit frequency
-     * @param m_endDate   Saving end date
+     * @param name      Product name
+     * @param image     Product image
+     * @param price     Product price
+     * @param frequency Deposit frequency
+     * @param endDate   Saving end date
      */
-    public Product(String m_name, Image m_image, float m_price, FREQUENCY m_frequency, Calendar m_endDate) {
-        this.m_name = m_name;
-        this.m_image = m_image;
-        this.m_price = m_price;
-        this.m_frequency = m_frequency;
-        this.m_method = METHOD.BY_END_DATE;
-        this.m_saving = 0.0f;
-        this.m_endDate = m_endDate;
+    public Product(String name, String image, float price, FREQUENCY frequency, Calendar endDate) {
+        this.id = (name + String.valueOf(price)).hashCode();
+        this.name = name;
+        this.image = image;
+        this.price = price;
+        this.frequency = frequency;
+        this.method = METHOD.BY_END_DATE;
+        this.savings = 0.0f;
+        this.endDate = endDate;
 
         calcDeposit();
     }
 
-    //region Getter and setter for m_name
-    public String getM_name() {
-        return m_name;
+    //region Getter and setter for id
+    public int getId() {
+        return id;
     }
 
-    public void setM_name(String m_name) {
-        this.m_name = m_name;
+//  public void setM_id(int id) {
+//      this.id = id;
+//  }
+    //endregion
+
+    //region Getter and setter for name
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
     //endregion
 
-    //region Getter and setter for m_image
-    public Image getM_image() {
-        return m_image;
+    //region Getter and setter for image
+    public String getImage() {
+        return image;
     }
 
-    public void setM_image(Image m_image) {
-        this.m_image = m_image;
+    public void setImage(String image) {
+        this.image = image;
     }
     //endregion
 
-    //region Getter and setter for m_price
-    public float getM_price() {
-        return m_price;
+    //region Getter and setter for price
+    public float getPrice() {
+        return price;
     }
 
-    public void setM_price(float m_price) {
-        this.m_price = m_price;
+    public void setPrice(float price) {
+        this.price = price;
         calcDeposit();
     }
     //endregion
 
-    //region Getter and setter for m_frequency
-    public FREQUENCY getM_frequency() {
-        return m_frequency;
+    //region Getter and setter for frequency
+    public FREQUENCY getFrequency() {
+        return frequency;
     }
 
-    public void setM_frequency(FREQUENCY m_frequency) {
-        this.m_frequency = m_frequency;
+    public void setFrequency(FREQUENCY frequency) {
+        this.frequency = frequency;
         calcDeposit();
     }
     //endregion
 
-    //region Getter and setter for m_deposit
-    public float getM_deposit() {
-        return m_deposit;
+    //region Getter and setter for method
+    public METHOD getMethod() {
+        return method;
     }
 
-    public void setM_deposit(float m_deposit) {
-        this.m_deposit = m_deposit;
+    public void setMethod(METHOD method) {
+        this.method = method;
+    }
+    //endregion
+
+    //region Getter and setter for deposit
+    public float getDeposit() {
+        return deposit;
+    }
+
+    public void setDeposit(float deposit) {
+        this.deposit = deposit;
         calcEndDate();
     }
     //endregion
 
-    //region Getter and setter for m_saving
-    public float getM_saving() {
-        return m_saving;
+    //region Getter and setter for savings
+    public float getSavings() {
+        return savings;
     }
 
-    public void setM_saving(float m_saving) {
-        this.m_saving = m_saving;
-        switch (m_method) {
+    public void setSavings(float savings) {
+        this.savings = savings;
+        switch (method) {
             case BY_DEPOSIT: {
                 calcDeposit();
                 break;
@@ -149,30 +192,30 @@ public class Product {
     }
     //endregion
 
-    //region Getter and setter for m_startDate
-    public Calendar getM_startDate() {
-        return m_startDate;
+    //region Getter and setter for startDate
+    public Calendar getStartDate() {
+        return startDate;
     }
 
-//  public void setM_startDate(Calendar m_startDate) {
-//      this.m_startDate = m_startDate;
+//  public void setM_startDate(Calendar startDate) {
+//      this.startDate = startDate;
 //  }
     //endregion
 
-    //region Getter and setter for m_endDate
-    public Calendar getM_endDate() {
-        return m_endDate;
+    //region Getter and setter for endDate
+    public Calendar getEndDate() {
+        return endDate;
     }
 
-    public void setM_endDate(Calendar m_endDate) {
-        this.m_endDate = m_endDate;
+    public void setEndDate(Calendar endDate) {
+        this.endDate = endDate;
         calcDeposit();
     }
     //endregion
 
     //region Additional methods
     public void deposit() {
-        m_saving += m_deposit;
+        savings += deposit;
 
 //      Tuka ke se postavuva alarmot za datumot na sledeniot depozit.
     }
@@ -180,58 +223,58 @@ public class Product {
 
     //region Helper methods
     private void calcDeposit() {
-        m_startDate = Calendar.getInstance();
-        long timeDifference = m_endDate.getTimeInMillis() - m_startDate.getTimeInMillis();
-        float balance = m_price - m_saving;
+        startDate = Calendar.getInstance();
+        long timeDifference = endDate.getTimeInMillis() - startDate.getTimeInMillis();
+        float balance = price - savings;
 
-        switch (m_frequency) {
+        switch (frequency) {
             case DAILY: {
                 int days = (int) (timeDifference / (1000 * 60 * 60 * 24));
-                m_deposit = balance / days;
+                deposit = balance / days;
                 break;
             }
             case WEEKLY: {
                 int weeks = (int) (timeDifference / (1000 * 60 * 60 * 24 * 7));
-                m_deposit = balance / weeks;
+                deposit = balance / weeks;
                 break;
             }
             case MONTHLY: {
                 int months = (int) (timeDifference / (1000 * 60 * 60 * 24 * 7 * 12));
-                m_deposit = balance / months;
+                deposit = balance / months;
                 break;
             }
         }
 
         if (Logger.s_enabled) {
-            Log.i("*Product: Product()", "The deposit is: " + String.valueOf(m_deposit));
+            Log.i("*Product: Product()", "The deposit is: " + String.valueOf(deposit));
         }
     }
 
     private void calcEndDate() {
-        this.m_startDate = Calendar.getInstance();
-        this.m_endDate = Calendar.getInstance();
-        float balance = (m_price - m_saving);
+        this.startDate = Calendar.getInstance();
+        this.endDate = Calendar.getInstance();
+        float balance = (price - savings);
 
-        switch (m_frequency) {
+        switch (frequency) {
             case DAILY: {
-                int days = (int) (balance / m_deposit);
-                m_endDate.add(Calendar.DAY_OF_YEAR, days);
+                int days = (int) (balance / deposit);
+                endDate.add(Calendar.DAY_OF_YEAR, days);
                 break;
             }
             case WEEKLY: {
-                int weeks = (int) (balance / m_deposit);
-                m_endDate.add(Calendar.WEEK_OF_YEAR, weeks);
+                int weeks = (int) (balance / deposit);
+                endDate.add(Calendar.WEEK_OF_YEAR, weeks);
                 break;
             }
             case MONTHLY: {
-                int months = (int) (balance / m_deposit);
-                m_endDate.add(Calendar.MONTH, months);
+                int months = (int) (balance / deposit);
+                endDate.add(Calendar.MONTH, months);
                 break;
             }
         }
 
         if (Logger.s_enabled) {
-            Log.i("*Product: Product()", "The end date is: " + m_endDate.getTime().toString());
+            Log.i("*Product: Product()", "The end date is: " + endDate.getTime().toString());
         }
     }
     //endregion
