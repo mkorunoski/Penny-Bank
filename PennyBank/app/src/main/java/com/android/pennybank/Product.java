@@ -3,6 +3,7 @@ package com.android.pennybank;
 import android.media.Image;
 import android.util.*;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 /**
@@ -21,13 +22,26 @@ public class Product {
             this.value = value;
         }
 
-        int getValue() {
+        public int getValue() {
             return value;
+        }
+
+        public static FREQUENCY fromValue(Integer value) {
+            switch (value) {
+                case 1:
+                    return DAILY;
+                case 2:
+                    return WEEKLY;
+                case 3:
+                    return MONTHLY;
+                default:
+                    return DAILY;
+            }
         }
     }
 
     public enum METHOD {
-        BY_DEPOSIT(1), /// Saving based upon the specified deposit value
+        BY_DEPOSIT(1),  /// Saving based upon the specified deposit value
         BY_END_DATE(2); /// Saving based upon the date when the user wants to purchase the product
 
         private int value;
@@ -36,14 +50,27 @@ public class Product {
             this.value = value;
         }
 
-        int getValue() {
+        public int getValue() {
             return value;
+        }
+
+        public static METHOD fromValue(int value) {
+            switch (value) {
+                case 1:
+                    return BY_DEPOSIT;
+                case 2:
+                    return BY_END_DATE;
+                default:
+                    return BY_DEPOSIT;
+            }
         }
     }
 
+    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
+
     private int id;
     private String name;
-    private String image;
+    private String image; // Stored as location to the desired image
     private float price;
     private FREQUENCY frequency;
     private METHOD method;
@@ -54,6 +81,35 @@ public class Product {
 
 //  Otkako ke se implementira servisot.
 //  private Alarm m_alram;
+
+    /**
+     * Constructor that initializes based upon data stored in database
+     *
+     * @param id        Product id
+     * @param name      Product name
+     * @param image     Product image
+     * @param price     Product price
+     * @param frequency Deposit frequency
+     * @param method    Saving method
+     * @param deposit   Deposit value
+     * @param savings   Current savings
+     * @param startDate Start date
+     * @param endDate   End date
+     */
+    public Product(int id, String name, String image, float price,
+                   FREQUENCY frequency, METHOD method, float deposit,
+                   float savings, Calendar startDate, Calendar endDate) {
+        this.id = id;
+        this.name = name;
+        this.image = image;
+        this.price = price;
+        this.frequency = frequency;
+        this.method = method;
+        this.deposit = deposit;
+        this.savings = savings;
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
 
     /**
      * Constructor that initializes based upon the deposit value

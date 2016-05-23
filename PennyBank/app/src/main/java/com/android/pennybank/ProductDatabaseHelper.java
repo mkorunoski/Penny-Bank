@@ -2,10 +2,13 @@ package com.android.pennybank;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import java.text.SimpleDateFormat;
+import java.text.ParseException;
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  * A database of products.
@@ -31,7 +34,6 @@ public class ProductDatabaseHelper extends SQLiteOpenHelper {
     public ProductDatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
-
 
     @Override
     public void onCreate(SQLiteDatabase db) {
@@ -69,14 +71,52 @@ public class ProductDatabaseHelper extends SQLiteOpenHelper {
         values.put(KEY_SAVING_METHOD, product.getMethod().getValue());
         values.put(KEY_DEPOSIT, product.getDeposit());
         values.put(KEY_SAVINGS, product.getSavings());
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        String startDate = dateFormat.format(product.getStartDate().getTime());
+        String startDate = Product.DATE_FORMAT.format(product.getStartDate().getTime());
         values.put(KEY_START_DATE, startDate);
-        String endDate = dateFormat.format(product.getStartDate().getTime());
+        String endDate = Product.DATE_FORMAT.format(product.getStartDate().getTime());
         values.put(KEY_END_DATE, endDate);
 
         db.insert(TABLE_PRODUCTS, null, values);
         db.close();
+    }
+
+    public Product getProduct(int id) throws ParseException {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(TABLE_PRODUCTS,
+                new String[]{KEY_ID, KEY_PRODUCT_NAME, KEY_PRODUCT_IMAGE, KEY_PRODUCT_PRICE,
+                        KEY_DEPOSIT_FREQUENCY, KEY_SAVING_METHOD, KEY_DEPOSIT, KEY_SAVINGS,
+                        KEY_START_DATE, KEY_END_DATE},
+                KEY_ID + "=?",
+                new String[]{String.valueOf(id)}, null, null, null, null);
+
+        if (cursor != null) {
+            cursor.moveToFirst();
+        }
+
+        Date date;
+        date = Product.DATE_FORMAT.parse(cursor.getString(8));
+        Calendar startDate = Calendar.getInstance();
+        startDate.setTime(date);
+        date = Product.DATE_FORMAT.parse(cursor.getString(9));
+        Calendar endDate = Calendar.getInstance();
+        endDate.setTime(date);
+
+
+        Product product = new Product(
+                Integer.parseInt(cursor.getString(0)),                              // id
+                cursor.getString(1),                                                // name
+                cursor.getString(2),                                                // image
+                Float.parseFloat(cursor.getString(3)),                              // price
+                Product.FREQUENCY.fromValue(Integer.parseInt(cursor.getString(4))), // frequency
+                Product.METHOD.fromValue(Integer.parseInt(cursor.getString(5))),    // method
+                Float.parseFloat(cursor.getString(6)),                              // deposit
+                Float.parseFloat(cursor.getString(7)),                              // savings
+                startDate,                                                          // startDate
+                endDate                                                             // endDate
+        );
+
+        return product;
     }
 
 }
