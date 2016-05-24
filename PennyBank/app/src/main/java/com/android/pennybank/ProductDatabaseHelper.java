@@ -119,4 +119,31 @@ public class ProductDatabaseHelper extends SQLiteOpenHelper {
         return product;
     }
 
+    public void deleteContact(int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_PRODUCTS, KEY_ID + " = ?", new String[]{String.valueOf(id)});
+        db.close();
+    }
+
+    public int updateProduct(Product product) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_ID, product.getId());
+        values.put(KEY_PRODUCT_NAME, product.getName());
+        values.put(KEY_PRODUCT_IMAGE, product.getImage());
+        values.put(KEY_PRODUCT_PRICE, product.getPrice());
+        values.put(KEY_DEPOSIT_FREQUENCY, product.getFrequency().getValue());
+        values.put(KEY_SAVING_METHOD, product.getMethod().getValue());
+        values.put(KEY_DEPOSIT, product.getDeposit());
+        values.put(KEY_SAVINGS, product.getSavings());
+        String startDate = Product.DATE_FORMAT.format(product.getStartDate().getTime());
+        values.put(KEY_START_DATE, startDate);
+        String endDate = Product.DATE_FORMAT.format(product.getStartDate().getTime());
+        values.put(KEY_END_DATE, endDate);
+
+        return db.update(TABLE_PRODUCTS, values, KEY_ID + " = ?",
+                new String[]{String.valueOf(product.getId())});
+    }
+
 }
