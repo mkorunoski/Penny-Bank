@@ -1,1 +1,1 @@
-# Penny-Bank
+# Penny Bank
