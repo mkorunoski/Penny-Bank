@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">Penny Bank</string>
+    <string-array name="deposit_schedule">
+        <item>Daily</item>
+        <item>Monthly</item>
+        <item>Weekly</item>
+    </string-array>
+    <string-array name="saving_method">
+        <item>By deposit</item>
+        <item>By end date</item>
+    </string-array>
 </resources>
