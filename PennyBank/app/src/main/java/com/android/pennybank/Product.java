@@ -1,6 +1,5 @@
 package com.android.pennybank;
 
-import android.media.Image;
 import android.util.*;
 
 import java.text.SimpleDateFormat;
