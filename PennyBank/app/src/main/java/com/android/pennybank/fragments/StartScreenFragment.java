@@ -1,4 +1,4 @@
-package com.android.pennybank;
+package com.android.pennybank.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -8,6 +8,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+
+import com.android.pennybank.activities.MainActivity;
+import com.android.pennybank.R;
 
 public class StartScreenFragment extends Fragment {
 
@@ -43,7 +46,7 @@ public class StartScreenFragment extends Fragment {
         mBtnViewSavings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                mFragmentListener.switchFragments(MainActivity.FRAGMENTS.VIEW_SAVINGS_FRAGMENT);
             }
         });
     }

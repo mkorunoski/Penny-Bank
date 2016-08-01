@@ -5,7 +5,7 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/tv_product_name"
+        android:id="@+id/custom_adapter_row_tv_product_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Product name:"
@@ -17,7 +17,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/tv_product_name"
+        android:layout_below="@+id/custom_adapter_row_tv_product_name"
         android:layout_toLeftOf="@+id/btn_choose_picture"
         android:layout_toStartOf="@+id/btn_choose_picture" />
 
@@ -41,7 +41,7 @@
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <Spinner
-        android:id="@+id/spn_deposit_schedule"
+        android:id="@+id/spn_deposit_frequency"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
@@ -56,9 +56,9 @@
         android:id="@+id/spn_saving_method"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/spn_deposit_schedule"
-        android:layout_alignStart="@+id/spn_deposit_schedule"
-        android:layout_below="@+id/spn_deposit_schedule"
+        android:layout_alignLeft="@+id/spn_deposit_frequency"
+        android:layout_alignStart="@+id/spn_deposit_frequency"
+        android:layout_below="@+id/spn_deposit_frequency"
         android:layout_centerHorizontal="true"
         android:minHeight="80dp"
         android:minWidth="100dp"
@@ -75,13 +75,13 @@
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <TextView
-        android:id="@+id/tv_price"
+        android:id="@+id/tv_deposit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_below="@+id/spn_saving_method"
-        android:text="Price:"
+        android:text="Deposit:"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <EditText
@@ -112,10 +112,10 @@
         android:id="@+id/ed_product_price"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/tv_product_name"
+        android:layout_alignEnd="@+id/custom_adapter_row_tv_product_name"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_alignRight="@+id/tv_product_name"
+        android:layout_alignRight="@+id/custom_adapter_row_tv_product_name"
         android:layout_below="@+id/tv_product_price"
         android:ems="10"
         android:inputType="numberDecimal" />

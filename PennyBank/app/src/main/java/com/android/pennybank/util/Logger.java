@@ -1,4 +1,4 @@
-package com.android.pennybank;
+package com.android.pennybank.util;
 
 public class Logger {
     public static boolean s_enabled = true;

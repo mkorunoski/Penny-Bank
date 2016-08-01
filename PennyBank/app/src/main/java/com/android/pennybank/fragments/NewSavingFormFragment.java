@@ -1,4 +1,4 @@
-package com.android.pennybank;
+package com.android.pennybank.fragments;
 
 import android.app.Fragment;
 import android.os.Bundle;
@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+
+import com.android.pennybank.R;
 
 public class NewSavingFormFragment extends Fragment {
 
@@ -23,7 +25,7 @@ public class NewSavingFormFragment extends Fragment {
     }
 
     private void setup(View view) {
-        mSpnDepositSchedule = (Spinner) view.findViewById(R.id.spn_deposit_schedule);
+        mSpnDepositSchedule = (Spinner) view.findViewById(R.id.spn_deposit_frequency);
         mSpnSavingMethod = (Spinner) view.findViewById(R.id.spn_saving_method);
 
         ArrayAdapter<CharSequence> adapter;

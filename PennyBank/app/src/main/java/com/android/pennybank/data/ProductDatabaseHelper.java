@@ -1,4 +1,4 @@
-package com.android.pennybank;
+package com.android.pennybank.data;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -80,7 +81,7 @@ public class ProductDatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public Product getProduct(int id) throws ParseException {
+    public Product getProduct(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_PRODUCTS,
@@ -94,14 +95,38 @@ public class ProductDatabaseHelper extends SQLiteOpenHelper {
             cursor.moveToFirst();
         }
 
-        Date date;
-        date = Product.DATE_FORMAT.parse(cursor.getString(8));
-        Calendar startDate = Calendar.getInstance();
-        startDate.setTime(date);
-        date = Product.DATE_FORMAT.parse(cursor.getString(9));
-        Calendar endDate = Calendar.getInstance();
-        endDate.setTime(date);
+        return initProduct(cursor);
+    }
 
+    public ArrayList<Product> getAllProducts() {
+        ArrayList<Product> products = new ArrayList<>();
+
+        String selectQuery = "SELECT  * FROM " + TABLE_PRODUCTS;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                products.add(initProduct(cursor));
+            } while (cursor.moveToNext());
+        }
+
+        return products;
+    }
+
+    private Product initProduct(Cursor cursor) {
+        Calendar startDate = Calendar.getInstance();
+        Calendar endDate = Calendar.getInstance();
+        try {
+            Date date;
+            date = Product.DATE_FORMAT.parse(cursor.getString(8));
+            startDate.setTime(date);
+            date = Product.DATE_FORMAT.parse(cursor.getString(9));
+            endDate.setTime(date);
+        } catch (ParseException pe) {
+            pe.printStackTrace();
+        }
 
         Product product = new Product(
                 Integer.parseInt(cursor.getString(0)),                              // id
@@ -119,7 +144,7 @@ public class ProductDatabaseHelper extends SQLiteOpenHelper {
         return product;
     }
 
-    public void deleteContact(int id) {
+    public void deleteProduct(int id) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_PRODUCTS, KEY_ID + " = ?", new String[]{String.valueOf(id)});
         db.close();

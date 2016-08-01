@@ -7,7 +7,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.android.pennybank.MainActivity">
+    tools:context=".activities.MainActivity">
 
     <ScrollView
         android:id="@+id/fragment_container"
@@ -16,5 +16,5 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:fillViewport="true"
-        android:paddingpadding="20dp" />
+        android:padding="20dp" />
 </RelativeLayout>

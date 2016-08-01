@@ -1,6 +1,8 @@
-package com.android.pennybank;
+package com.android.pennybank.data;
 
 import android.util.*;
+
+import com.android.pennybank.util.Logger;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;

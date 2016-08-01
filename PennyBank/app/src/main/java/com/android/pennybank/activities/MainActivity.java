@@ -1,7 +1,15 @@
-package com.android.pennybank;
+package com.android.pennybank.activities;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import com.android.pennybank.R;
+import com.android.pennybank.data.ProductDatabaseHelper;
+import com.android.pennybank.data.ProductDatabaseWrapper;
+import com.android.pennybank.fragments.FragmentListener;
+import com.android.pennybank.fragments.NewSavingFormFragment;
+import com.android.pennybank.fragments.StartScreenFragment;
+import com.android.pennybank.fragments.ViewSavingsFragment;
 
 public class MainActivity extends AppCompatActivity implements FragmentListener {
 
@@ -9,7 +17,8 @@ public class MainActivity extends AppCompatActivity implements FragmentListener 
     {
         NULL,
         START_SCREEN_FRAGMENT,
-        NEW_SAVING_FORM_FRAGMENT
+        NEW_SAVING_FORM_FRAGMENT,
+        VIEW_SAVINGS_FRAGMENT
     }
 
     protected FRAGMENTS mLastFragment;
@@ -19,6 +28,10 @@ public class MainActivity extends AppCompatActivity implements FragmentListener 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Ovoj povik ja inicijalizira bazata koja ke se koristi
+        // vo fragmentite za prikazuvanje, dodavanje i sl.
+        ProductDatabaseWrapper.initDatabase(this);
 
         switchFragments(FRAGMENTS.START_SCREEN_FRAGMENT);
         mLastFragment = FRAGMENTS.NULL;
@@ -40,6 +53,12 @@ public class MainActivity extends AppCompatActivity implements FragmentListener 
                 getFragmentManager().beginTransaction().replace(R.id.fragment_container, new NewSavingFormFragment()).commit();
                 mLastFragment = mCurrentFragment;
                 mCurrentFragment = FRAGMENTS.NEW_SAVING_FORM_FRAGMENT;
+                break;
+            }
+            case VIEW_SAVINGS_FRAGMENT: {
+                getFragmentManager().beginTransaction().replace(R.id.fragment_container, new ViewSavingsFragment()).commit();
+                mLastFragment = mCurrentFragment;
+                mCurrentFragment = FRAGMENTS.VIEW_SAVINGS_FRAGMENT;
                 break;
             }
         }
