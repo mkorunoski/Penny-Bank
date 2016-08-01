@@ -46,9 +46,9 @@ public class CustomAdapter extends BaseAdapter {
 
         Product product = products.get(position);
 
-        ImageView ivProductImage = (ImageView)row.findViewById(R.id.custom_adapter_row_iv_product_image);
-        TextView tvProductName = (TextView)row.findViewById(R.id.custom_adapter_row_tv_product_name);
-        TextView tvSavingStatus = (TextView)row.findViewById(R.id.custom_adapter_row_tv_saving_status);
+        ImageView ivProductImage = (ImageView)row.findViewById(R.id.product_image);
+        TextView tvProductName = (TextView)row.findViewById(R.id.product_name_label);
+        TextView tvSavingStatus = (TextView)row.findViewById(R.id.saving_status);
 
         tvProductName.setText(product.getName());
         tvSavingStatus.setText((product.getPrice() - product.getSavings()) + " ¤ left.");

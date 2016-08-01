@@ -1,5 +1,6 @@
 package com.android.pennybank.fragments;
 
+import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.os.Bundle;
@@ -30,6 +31,13 @@ public class ViewSavingsFragment extends Fragment {
         mFragmentListener = (FragmentListener) context;
     }
 
+    // For older API level
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mFragmentListener = (FragmentListener) activity;
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -40,7 +48,7 @@ public class ViewSavingsFragment extends Fragment {
 
     private void setup(View view) {
         mLvSavings = (ListView)view.findViewById(R.id.lv_savings);
-        mCustomAdapter = new CustomAdapter(getContext());
+        mCustomAdapter = new CustomAdapter(getActivity().getApplicationContext());
         mLvSavings.setAdapter(mCustomAdapter);
 
         mBtnBack = (Button)view.findViewById(R.id.btn_back);
@@ -53,9 +61,9 @@ public class ViewSavingsFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 FragmentManager fragmentManager = getFragmentManager();
-                ProductInfoDialogFragment productInfoDialogFragment = new ProductInfoDialogFragment();
-                productInfoDialogFragment.setProduct(ProductDatabaseWrapper.getProductFromDatabase((int)mCustomAdapter.getItemId(position)));
-                productInfoDialogFragment.show(fragmentManager, "Product Info");
+                SavingInfoDialogFragment savingInfoDialogFragment = new SavingInfoDialogFragment();
+                savingInfoDialogFragment.setProduct(ProductDatabaseWrapper.getProductFromDatabase((int)mCustomAdapter.getItemId(position)));
+                savingInfoDialogFragment.show(fragmentManager, "Product Info");
             }
         });
 

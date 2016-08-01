@@ -4,7 +4,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.android.pennybank.R;
-import com.android.pennybank.data.ProductDatabaseHelper;
 import com.android.pennybank.data.ProductDatabaseWrapper;
 import com.android.pennybank.fragments.FragmentListener;
 import com.android.pennybank.fragments.NewSavingFormFragment;
@@ -13,9 +12,7 @@ import com.android.pennybank.fragments.ViewSavingsFragment;
 
 public class MainActivity extends AppCompatActivity implements FragmentListener {
 
-    // Tommy was here
-    public enum FRAGMENTS
-    {
+    public enum FRAGMENTS {
         NULL,
         START_SCREEN_FRAGMENT,
         NEW_SAVING_FORM_FRAGMENT,
@@ -30,8 +27,6 @@ public class MainActivity extends AppCompatActivity implements FragmentListener 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Ovoj povik ja inicijalizira bazata koja ke se koristi
-        // vo fragmentite za prikazuvanje, dodavanje i sl.
         ProductDatabaseWrapper.initDatabase(this);
 
         switchFragments(FRAGMENTS.START_SCREEN_FRAGMENT);
@@ -40,10 +35,8 @@ public class MainActivity extends AppCompatActivity implements FragmentListener 
     }
 
     @Override
-    public void switchFragments(FRAGMENTS fragment)
-    {
-        switch (fragment)
-        {
+    public void switchFragments(FRAGMENTS fragment) {
+        switch (fragment) {
             case START_SCREEN_FRAGMENT: {
                 getFragmentManager().beginTransaction().replace(R.id.fragment_container, new StartScreenFragment()).commit();
                 mLastFragment = mCurrentFragment;

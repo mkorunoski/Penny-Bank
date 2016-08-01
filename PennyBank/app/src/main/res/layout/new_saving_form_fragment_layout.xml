@@ -2,137 +2,133 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:gravity="center">
 
     <TextView
-        android:id="@+id/custom_adapter_row_tv_product_name"
+        android:id="@+id/product_name_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Product name:"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <EditText
-        android:id="@+id/et_product_name"
-        android:layout_width="260dp"
+        android:id="@+id/product_name"
+        android:layout_width="256dp"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/custom_adapter_row_tv_product_name"
-        android:layout_toLeftOf="@+id/btn_choose_picture"
-        android:layout_toStartOf="@+id/btn_choose_picture" />
+        android:layout_below="@+id/product_name_label"
+        android:layout_toLeftOf="@+id/choose_picture"
+        android:layout_toStartOf="@+id/choose_picture" />
 
     <TextView
-        android:id="@+id/tv_product_price"
+        android:id="@+id/product_price_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/et_product_name"
+        android:layout_below="@+id/product_name"
         android:text="Product price:"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <TextView
-        android:id="@+id/tv_savings"
+        android:id="@+id/savings_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/ed_product_price"
+        android:layout_below="@+id/product_price"
         android:layout_centerHorizontal="true"
         android:text="Savings:"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <Spinner
-        android:id="@+id/spn_deposit_frequency"
+        android:id="@+id/deposit_frequency"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/tv_savings"
+        android:layout_below="@+id/savings_label"
         android:layout_centerHorizontal="true"
-        android:minHeight="80dp"
-        android:minWidth="100dp"
+        android:minHeight="64dp"
+        android:minWidth="128dp"
         android:spinnerMode="dialog" />
 
     <Spinner
-        android:id="@+id/spn_saving_method"
+        android:id="@+id/saving_method"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/spn_deposit_frequency"
-        android:layout_alignStart="@+id/spn_deposit_frequency"
-        android:layout_below="@+id/spn_deposit_frequency"
+        android:layout_below="@+id/deposit_frequency"
         android:layout_centerHorizontal="true"
-        android:minHeight="80dp"
-        android:minWidth="100dp"
+        android:minHeight="64dp"
+        android:minWidth="128dp"
         android:spinnerMode="dialog" />
 
     <TextView
-        android:id="@+id/tv_end_date"
+        android:id="@+id/end_date_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/spn_saving_method"
+        android:layout_below="@+id/saving_method"
         android:text="End date:"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <TextView
-        android:id="@+id/tv_deposit"
+        android:id="@+id/deposit_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_below="@+id/spn_saving_method"
+        android:layout_below="@+id/saving_method"
         android:text="Deposit:"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <EditText
-        android:id="@+id/ed_end_date"
+        android:id="@+id/end_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/tv_end_date"
-        android:layout_toLeftOf="@+id/btn_save"
-        android:layout_toStartOf="@+id/btn_save"
+        android:layout_below="@+id/end_date_label"
+        android:layout_toLeftOf="@+id/save"
+        android:layout_toStartOf="@+id/save"
         android:ems="10"
         android:inputType="date" />
 
     <EditText
-        android:id="@+id/ed_price"
+        android:id="@+id/deposit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/ed_end_date"
+        android:layout_alignBottom="@+id/end_date"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_toEndOf="@+id/btn_save"
-        android:layout_toRightOf="@+id/btn_save"
+        android:layout_toEndOf="@+id/save"
+        android:layout_toRightOf="@+id/save"
         android:ems="10"
         android:inputType="number" />
 
     <EditText
-        android:id="@+id/ed_product_price"
+        android:id="@+id/product_price"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/custom_adapter_row_tv_product_name"
+        android:layout_alignEnd="@+id/product_name_label"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_alignRight="@+id/custom_adapter_row_tv_product_name"
-        android:layout_below="@+id/tv_product_price"
+        android:layout_alignRight="@+id/product_name_label"
+        android:layout_below="@+id/product_price_label"
         android:ems="10"
         android:inputType="numberDecimal" />
 
     <Button
-        android:id="@+id/btn_save"
+        android:id="@+id/save"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/ed_price"
+        android:layout_below="@+id/deposit"
         android:layout_centerHorizontal="true"
         android:text="Save" />
 
     <Button
-        android:id="@+id/btn_choose_picture"
+        android:id="@+id/choose_picture"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/tv_product_price"
+        android:layout_above="@+id/product_price_label"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:text="Choose picture" />
