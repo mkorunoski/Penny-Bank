@@ -12,14 +12,14 @@ import java.util.Calendar;
  */
 public class Product {
 
-    public enum FREQUENCY {
-        DAILY(1),   /// The user will deposit daily
-        WEEKLY(2),  /// The user will deposit weekly
-        MONTHLY(3); /// The user will deposit monthly
+    public enum DEPOSIT_FREQUENCY {
+        DAILY(0),   /// The user will deposit daily
+        WEEKLY(1),  /// The user will deposit weekly
+        MONTHLY(2); /// The user will deposit monthly
 
         private int value;
 
-        FREQUENCY(int value) {
+        DEPOSIT_FREQUENCY(int value) {
             this.value = value;
         }
 
@@ -27,13 +27,13 @@ public class Product {
             return value;
         }
 
-        public static FREQUENCY fromValue(Integer value) {
+        public static DEPOSIT_FREQUENCY fromValue(Integer value) {
             switch (value) {
-                case 1:
+                case 0:
                     return DAILY;
-                case 2:
+                case 1:
                     return WEEKLY;
-                case 3:
+                case 2:
                     return MONTHLY;
                 default:
                     return DAILY;
@@ -41,13 +41,13 @@ public class Product {
         }
     }
 
-    public enum METHOD {
-        BY_DEPOSIT(1),  /// Saving based upon the specified deposit value
-        BY_END_DATE(2); /// Saving based upon the date when the user wants to purchase the product
+    public enum SAVING_METHOD {
+        BY_DEPOSIT(0),  /// Saving based upon the specified deposit value
+        BY_END_DATE(1); /// Saving based upon the date when the user wants to purchase the product
 
         private int value;
 
-        METHOD(int value) {
+        SAVING_METHOD(int value) {
             this.value = value;
         }
 
@@ -55,11 +55,11 @@ public class Product {
             return value;
         }
 
-        public static METHOD fromValue(int value) {
+        public static SAVING_METHOD fromValue(int value) {
             switch (value) {
-                case 1:
+                case 0:
                     return BY_DEPOSIT;
-                case 2:
+                case 1:
                     return BY_END_DATE;
                 default:
                     return BY_DEPOSIT;
@@ -67,14 +67,14 @@ public class Product {
         }
     }
 
-    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
+    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
 
     private int id;
     private String name;
     private String image; // Stored as location to the desired image
     private float price;
-    private FREQUENCY frequency;
-    private METHOD method;
+    private DEPOSIT_FREQUENCY depositFrequency;
+    private SAVING_METHOD savingMethod;
     private float deposit;
     private float savings;
     private Calendar startDate;
@@ -86,26 +86,26 @@ public class Product {
     /**
      * Constructor that initializes based upon data stored in database
      *
-     * @param id        Product id
-     * @param name      Product name
-     * @param image     Product image
-     * @param price     Product price
-     * @param frequency Deposit frequency
-     * @param method    Saving method
-     * @param deposit   Deposit value
-     * @param savings   Current savings
-     * @param startDate Start date
-     * @param endDate   End date
+     * @param id               Product id
+     * @param name             Product name
+     * @param image            Product image
+     * @param price            Product price
+     * @param depositFrequency Deposit depositFrequency
+     * @param savingMethod     Saving savingMethod
+     * @param deposit          Deposit value
+     * @param savings          Current savings
+     * @param startDate        Start date
+     * @param endDate          End date
      */
     public Product(int id, String name, String image, float price,
-                   FREQUENCY frequency, METHOD method, float deposit,
+                   DEPOSIT_FREQUENCY depositFrequency, SAVING_METHOD savingMethod, float deposit,
                    float savings, Calendar startDate, Calendar endDate) {
         this.id = id;
         this.name = name;
         this.image = image;
         this.price = price;
-        this.frequency = frequency;
-        this.method = method;
+        this.depositFrequency = depositFrequency;
+        this.savingMethod = savingMethod;
         this.deposit = deposit;
         this.savings = savings;
         this.startDate = startDate;
@@ -115,21 +115,22 @@ public class Product {
     /**
      * Constructor that initializes based upon the deposit value
      *
-     * @param name      Product name
-     * @param image     Product image
-     * @param price     Product price
-     * @param frequency Deposit frequency
-     * @param deposit   Deposit value
+     * @param name             Product name
+     * @param image            Product image
+     * @param price            Product price
+     * @param depositFrequency Deposit depositFrequency
+     * @param deposit          Deposit value
      */
-    public Product(String name, String image, float price, FREQUENCY frequency, float deposit) {
+    public Product(String name, String image, float price, DEPOSIT_FREQUENCY depositFrequency, float deposit) {
         this.id = (name + String.valueOf(price)).hashCode();
         this.name = name;
         this.image = image;
         this.price = price;
-        this.frequency = frequency;
-        this.method = METHOD.BY_DEPOSIT;
+        this.depositFrequency = depositFrequency;
+        this.savingMethod = SAVING_METHOD.BY_DEPOSIT;
         this.deposit = deposit;
         this.savings = 0.0f;
+        this.startDate = Calendar.getInstance();
 
         calcEndDate();
     }
@@ -137,20 +138,21 @@ public class Product {
     /**
      * Constructor that initializes based upon the date when the user wants to purchase the product
      *
-     * @param name      Product name
-     * @param image     Product image
-     * @param price     Product price
-     * @param frequency Deposit frequency
-     * @param endDate   Saving end date
+     * @param name             Product name
+     * @param image            Product image
+     * @param price            Product price
+     * @param depositFrequency Deposit depositFrequency
+     * @param endDate          Saving end date
      */
-    public Product(String name, String image, float price, FREQUENCY frequency, Calendar endDate) {
+    public Product(String name, String image, float price, DEPOSIT_FREQUENCY depositFrequency, Calendar endDate) {
         this.id = (name + String.valueOf(price)).hashCode();
         this.name = name;
         this.image = image;
         this.price = price;
-        this.frequency = frequency;
-        this.method = METHOD.BY_END_DATE;
+        this.depositFrequency = depositFrequency;
+        this.savingMethod = SAVING_METHOD.BY_END_DATE;
         this.savings = 0.0f;
+        this.startDate = Calendar.getInstance();
         this.endDate = endDate;
 
         calcDeposit();
@@ -193,28 +195,28 @@ public class Product {
 
     public void setPrice(float price) {
         this.price = price;
-        calcDeposit();
+        modify();
     }
     //endregion
 
-    //region Getter and setter for frequency
-    public FREQUENCY getFrequency() {
-        return frequency;
+    //region Getter and setter for depositFrequency
+    public DEPOSIT_FREQUENCY getDepositFrequency() {
+        return depositFrequency;
     }
 
-    public void setFrequency(FREQUENCY frequency) {
-        this.frequency = frequency;
-        calcDeposit();
+    public void setDepositFrequency(DEPOSIT_FREQUENCY depositFrequency) {
+        this.depositFrequency = depositFrequency;
+        modify();
     }
     //endregion
 
-    //region Getter and setter for method
-    public METHOD getMethod() {
-        return method;
+    //region Getter and setter for savingMethod
+    public SAVING_METHOD getSavingMethod() {
+        return savingMethod;
     }
 
-    public void setMethod(METHOD method) {
-        this.method = method;
+    public void setSavingMethod(SAVING_METHOD savingMethod) {
+        this.savingMethod = savingMethod;
     }
     //endregion
 
@@ -225,7 +227,7 @@ public class Product {
 
     public void setDeposit(float deposit) {
         this.deposit = deposit;
-        calcEndDate();
+        modify();
     }
     //endregion
 
@@ -236,16 +238,7 @@ public class Product {
 
     public void setSavings(float savings) {
         this.savings = savings;
-        switch (method) {
-            case BY_DEPOSIT: {
-                calcDeposit();
-                break;
-            }
-            case BY_END_DATE: {
-                calcEndDate();
-                break;
-            }
-        }
+        modify();
     }
     //endregion
 
@@ -266,7 +259,7 @@ public class Product {
 
     public void setEndDate(Calendar endDate) {
         this.endDate = endDate;
-        calcDeposit();
+        modify();
     }
     //endregion
 
@@ -279,25 +272,45 @@ public class Product {
     //endregion
 
     //region Helper methods
+    private void modify() {
+        if (getSavingMethod() == SAVING_METHOD.BY_DEPOSIT) {
+            calcEndDate();
+        } else if (getSavingMethod() == SAVING_METHOD.BY_END_DATE) {
+            calcDeposit();
+        }
+    }
+
     private void calcDeposit() {
-        startDate = Calendar.getInstance();
         long timeDifference = endDate.getTimeInMillis() - startDate.getTimeInMillis();
         float balance = price - savings;
 
-        switch (frequency) {
+        switch (depositFrequency) {
             case DAILY: {
-                int days = (int) (timeDifference / (1000 * 60 * 60 * 24));
-                deposit = balance / days;
+                if (timeDifference == 0) {
+                    deposit = 0.0f;
+                } else {
+                    int days = (int) (timeDifference / (1000 * 60 * 60 * 24));
+                    deposit = balance / days;
+                }
                 break;
             }
             case WEEKLY: {
-                int weeks = (int) (timeDifference / (1000 * 60 * 60 * 24 * 7));
-                deposit = balance / weeks;
+                if (timeDifference == 0) {
+                    deposit = 0.0f;
+                } else {
+                    int weeks = (int) (timeDifference / (1000 * 60 * 60 * 24 * 7));
+                    deposit = balance / weeks;
+                }
                 break;
             }
             case MONTHLY: {
-                int months = (int) (timeDifference / (1000 * 60 * 60 * 24 * 7 * 12));
-                deposit = balance / months;
+                if (timeDifference == 0) {
+                    deposit = 0.0f;
+                } else {
+                    long div = 1000L * 60 * 60 * 24 * 7 * 12;
+                    int months = (int) (timeDifference / div);
+                    deposit = balance / months;
+                }
                 break;
             }
         }
@@ -308,24 +321,21 @@ public class Product {
     }
 
     private void calcEndDate() {
-        this.startDate = Calendar.getInstance();
-        this.endDate = Calendar.getInstance();
-        float balance = (price - savings);
+        this.endDate = (Calendar) startDate.clone();
+        float balance = price - savings;
+        int increment = (int) (balance / deposit);
 
-        switch (frequency) {
+        switch (depositFrequency) {
             case DAILY: {
-                int days = (int) (balance / deposit);
-                endDate.add(Calendar.DAY_OF_YEAR, days);
+                endDate.add(Calendar.DAY_OF_YEAR, increment);
                 break;
             }
             case WEEKLY: {
-                int weeks = (int) (balance / deposit);
-                endDate.add(Calendar.WEEK_OF_YEAR, weeks);
+                endDate.add(Calendar.WEEK_OF_YEAR, increment);
                 break;
             }
             case MONTHLY: {
-                int months = (int) (balance / deposit);
-                endDate.add(Calendar.MONTH, months);
+                endDate.add(Calendar.MONTH, increment);
                 break;
             }
         }

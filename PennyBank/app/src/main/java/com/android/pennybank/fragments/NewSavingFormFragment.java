@@ -14,8 +14,8 @@ import com.android.pennybank.R;
 
 public class NewSavingFormFragment extends Fragment {
 
-    Spinner mSpnDepositSchedule;
-    Spinner mSpnSavingMethod;
+    private Spinner mDepositFrequency;
+    private Spinner mSavingMethod;
 
     @Nullable
     @Override
@@ -26,17 +26,17 @@ public class NewSavingFormFragment extends Fragment {
     }
 
     private void setup(View view) {
-        mSpnDepositSchedule = (Spinner) view.findViewById(R.id.deposit_frequency);
-        mSpnSavingMethod = (Spinner) view.findViewById(R.id.saving_method);
+        mDepositFrequency = (Spinner) view.findViewById(R.id.deposit_frequency);
+        mSavingMethod = (Spinner) view.findViewById(R.id.saving_method);
 
         ArrayAdapter<CharSequence> adapter;
         Context context = getActivity().getApplicationContext();
-        adapter = ArrayAdapter.createFromResource(context, R.array.deposit_schedule, android.R.layout.simple_spinner_item);
+        adapter = ArrayAdapter.createFromResource(context, R.array.deposit_frequency, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mSpnDepositSchedule.setAdapter(adapter);
+        mDepositFrequency.setAdapter(adapter);
 
         adapter = ArrayAdapter.createFromResource(context, R.array.saving_method, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mSpnSavingMethod.setAdapter(adapter);
+        mSavingMethod.setAdapter(adapter);
     }
 }

@@ -1,7 +1,11 @@
 package com.android.pennybank.activities;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.Toast;
 
 import com.android.pennybank.R;
 import com.android.pennybank.data.ProductDatabaseWrapper;
@@ -11,6 +15,8 @@ import com.android.pennybank.fragments.StartScreenFragment;
 import com.android.pennybank.fragments.ViewSavingsFragment;
 
 public class MainActivity extends AppCompatActivity implements FragmentListener {
+
+    public static final String PREF_NAME = "Preferences";
 
     public enum FRAGMENTS {
         NULL,

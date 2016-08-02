@@ -6,10 +6,11 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.android.pennybank.fragments.ViewSavingsFragment;
+
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 
 /**
  * A database of products.
@@ -68,14 +69,12 @@ public class ProductDatabaseHelper extends SQLiteOpenHelper {
         values.put(KEY_PRODUCT_NAME, product.getName());
         values.put(KEY_PRODUCT_IMAGE, product.getImage());
         values.put(KEY_PRODUCT_PRICE, product.getPrice());
-        values.put(KEY_DEPOSIT_FREQUENCY, product.getFrequency().getValue());
-        values.put(KEY_SAVING_METHOD, product.getMethod().getValue());
+        values.put(KEY_DEPOSIT_FREQUENCY, product.getDepositFrequency().getValue());
+        values.put(KEY_SAVING_METHOD, product.getSavingMethod().getValue());
         values.put(KEY_DEPOSIT, product.getDeposit());
         values.put(KEY_SAVINGS, product.getSavings());
-        String startDate = Product.DATE_FORMAT.format(product.getStartDate().getTime());
-        values.put(KEY_START_DATE, startDate);
-        String endDate = Product.DATE_FORMAT.format(product.getStartDate().getTime());
-        values.put(KEY_END_DATE, endDate);
+        values.put(KEY_START_DATE, Product.DATE_FORMAT.format(product.getStartDate().getTime()));
+        values.put(KEY_END_DATE, Product.DATE_FORMAT.format(product.getEndDate().getTime()));
 
         db.insert(TABLE_PRODUCTS, null, values);
         db.close();
@@ -119,26 +118,23 @@ public class ProductDatabaseHelper extends SQLiteOpenHelper {
         Calendar startDate = Calendar.getInstance();
         Calendar endDate = Calendar.getInstance();
         try {
-            Date date;
-            date = Product.DATE_FORMAT.parse(cursor.getString(8));
-            startDate.setTime(date);
-            date = Product.DATE_FORMAT.parse(cursor.getString(9));
-            endDate.setTime(date);
+            startDate.setTime(Product.DATE_FORMAT.parse(cursor.getString(8)));
+            endDate.setTime(Product.DATE_FORMAT.parse(cursor.getString(9)));
         } catch (ParseException pe) {
             pe.printStackTrace();
         }
 
         Product product = new Product(
-                Integer.parseInt(cursor.getString(0)),                              // id
-                cursor.getString(1),                                                // name
-                cursor.getString(2),                                                // image
-                Float.parseFloat(cursor.getString(3)),                              // price
-                Product.FREQUENCY.fromValue(Integer.parseInt(cursor.getString(4))), // frequency
-                Product.METHOD.fromValue(Integer.parseInt(cursor.getString(5))),    // method
-                Float.parseFloat(cursor.getString(6)),                              // deposit
-                Float.parseFloat(cursor.getString(7)),                              // savings
-                startDate,                                                          // startDate
-                endDate                                                             // endDate
+                Integer.parseInt(cursor.getString(0)),                                      // id
+                cursor.getString(1),                                                        // name
+                cursor.getString(2),                                                        // image
+                Float.parseFloat(cursor.getString(3)),                                      // price
+                Product.DEPOSIT_FREQUENCY.fromValue(Integer.parseInt(cursor.getString(4))), // frequency
+                Product.SAVING_METHOD.fromValue(Integer.parseInt(cursor.getString(5))),     // method
+                Float.parseFloat(cursor.getString(6)),                                      // deposit
+                Float.parseFloat(cursor.getString(7)),                                      // savings
+                startDate,                                                                  // startDate
+                endDate                                                                     // endDate
         );
 
         return product;
@@ -158,8 +154,8 @@ public class ProductDatabaseHelper extends SQLiteOpenHelper {
         values.put(KEY_PRODUCT_NAME, product.getName());
         values.put(KEY_PRODUCT_IMAGE, product.getImage());
         values.put(KEY_PRODUCT_PRICE, product.getPrice());
-        values.put(KEY_DEPOSIT_FREQUENCY, product.getFrequency().getValue());
-        values.put(KEY_SAVING_METHOD, product.getMethod().getValue());
+        values.put(KEY_DEPOSIT_FREQUENCY, product.getDepositFrequency().getValue());
+        values.put(KEY_SAVING_METHOD, product.getSavingMethod().getValue());
         values.put(KEY_DEPOSIT, product.getDeposit());
         values.put(KEY_SAVINGS, product.getSavings());
         String startDate = Product.DATE_FORMAT.format(product.getStartDate().getTime());

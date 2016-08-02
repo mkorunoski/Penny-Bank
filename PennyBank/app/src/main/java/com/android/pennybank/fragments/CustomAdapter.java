@@ -15,13 +15,18 @@ import com.android.pennybank.data.ProductDatabaseWrapper;
 import java.util.ArrayList;
 
 public class CustomAdapter extends BaseAdapter {
-
     private Context mContext;
     private ArrayList<Product> products;
 
     public CustomAdapter(Context context) {
         mContext = context;
-        products = ProductDatabaseWrapper.getProductsFromDatabase();
+        products = ProductDatabaseWrapper.getAllProducts();
+    }
+
+    @Override
+    public void notifyDataSetChanged() {
+        super.notifyDataSetChanged();
+        products = ProductDatabaseWrapper.getAllProducts();
     }
 
     @Override

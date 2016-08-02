@@ -2,7 +2,9 @@ package com.android.pennybank.fragments;
 
 import android.app.Activity;
 import android.app.FragmentManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.app.Fragment;
@@ -12,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.android.pennybank.activities.MainActivity;
 import com.android.pennybank.R;
@@ -19,11 +22,27 @@ import com.android.pennybank.data.ProductDatabaseWrapper;
 
 public class ViewSavingsFragment extends Fragment {
 
+    public static class Receiver extends BroadcastReceiver {
+        public static CustomAdapter mCustomAdapterRef;
+
+        public Receiver() {}
+
+        public Receiver(CustomAdapter customAdapter) {
+            mCustomAdapterRef = customAdapter;
+        }
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            mCustomAdapterRef.notifyDataSetChanged();
+        }
+    }
+
+    private Receiver mReceiver;
     private FragmentListener mFragmentListener;
 
-    private ListView mLvSavings;
+    private ListView mSavings;
     private CustomAdapter mCustomAdapter;
-    private Button mBtnBack;
+    private Button mBack;
 
     @Override
     public void onAttach(Context context) {
@@ -47,27 +66,28 @@ public class ViewSavingsFragment extends Fragment {
     }
 
     private void setup(View view) {
-        mLvSavings = (ListView)view.findViewById(R.id.lv_savings);
+        mSavings = (ListView) view.findViewById(R.id.lv_savings);
         mCustomAdapter = new CustomAdapter(getActivity().getApplicationContext());
-        mLvSavings.setAdapter(mCustomAdapter);
+        mReceiver = new Receiver(mCustomAdapter);
+        mSavings.setAdapter(mCustomAdapter);
 
-        mBtnBack = (Button)view.findViewById(R.id.btn_back);
+        mBack = (Button) view.findViewById(R.id.btn_back);
 
         setListeners();
     }
 
     private void setListeners() {
-        mLvSavings.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mSavings.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 FragmentManager fragmentManager = getFragmentManager();
                 SavingInfoDialogFragment savingInfoDialogFragment = new SavingInfoDialogFragment();
-                savingInfoDialogFragment.setProduct(ProductDatabaseWrapper.getProductFromDatabase((int)mCustomAdapter.getItemId(position)));
+                savingInfoDialogFragment.setProduct(ProductDatabaseWrapper.getProduct((int) mCustomAdapter.getItemId(position)));
                 savingInfoDialogFragment.show(fragmentManager, "Product Info");
             }
         });
 
-        mBtnBack.setOnClickListener(new View.OnClickListener() {
+        mBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mFragmentListener.switchFragments(MainActivity.FRAGMENTS.START_SCREEN_FRAGMENT);
