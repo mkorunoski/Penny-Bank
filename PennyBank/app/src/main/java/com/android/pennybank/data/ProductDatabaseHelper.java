@@ -94,6 +94,8 @@ public class ProductDatabaseHelper extends SQLiteOpenHelper {
             cursor.moveToFirst();
         }
 
+        db.close();
+
         return initProduct(cursor);
     }
 
@@ -110,6 +112,8 @@ public class ProductDatabaseHelper extends SQLiteOpenHelper {
                 products.add(initProduct(cursor));
             } while (cursor.moveToNext());
         }
+
+        db.close();
 
         return products;
     }
@@ -128,11 +132,11 @@ public class ProductDatabaseHelper extends SQLiteOpenHelper {
                 Integer.parseInt(cursor.getString(0)),                                      // id
                 cursor.getString(1),                                                        // name
                 cursor.getString(2),                                                        // image
-                Float.parseFloat(cursor.getString(3)),                                      // price
+                Integer.parseInt(cursor.getString(3)),                                      // price
                 Product.DEPOSIT_FREQUENCY.fromValue(Integer.parseInt(cursor.getString(4))), // frequency
                 Product.SAVING_METHOD.fromValue(Integer.parseInt(cursor.getString(5))),     // method
-                Float.parseFloat(cursor.getString(6)),                                      // deposit
-                Float.parseFloat(cursor.getString(7)),                                      // savings
+                Integer.parseInt(cursor.getString(6)),                                      // deposit
+                Integer.parseInt(cursor.getString(7)),                                      // savings
                 startDate,                                                                  // startDate
                 endDate                                                                     // endDate
         );
@@ -158,13 +162,15 @@ public class ProductDatabaseHelper extends SQLiteOpenHelper {
         values.put(KEY_SAVING_METHOD, product.getSavingMethod().getValue());
         values.put(KEY_DEPOSIT, product.getDeposit());
         values.put(KEY_SAVINGS, product.getSavings());
-        String startDate = Product.DATE_FORMAT.format(product.getStartDate().getTime());
-        values.put(KEY_START_DATE, startDate);
-        String endDate = Product.DATE_FORMAT.format(product.getStartDate().getTime());
-        values.put(KEY_END_DATE, endDate);
+        values.put(KEY_START_DATE, Product.DATE_FORMAT.format(product.getStartDate().getTime()));
+        values.put(KEY_END_DATE, Product.DATE_FORMAT.format(product.getEndDate().getTime()));
 
-        return db.update(TABLE_PRODUCTS, values, KEY_ID + " = ?",
+        int status =  db.update(TABLE_PRODUCTS, values, KEY_ID + " = ?",
                 new String[]{String.valueOf(product.getId())});
+
+        db.close();
+
+        return status;
     }
 
 }

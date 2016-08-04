@@ -11,7 +11,7 @@
         android:layout_height="128dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:src="@drawable/pennybank" />
+        android:src="@drawable/pennybank_title" />
 
     <Button
         android:id="@+id/new_saving"

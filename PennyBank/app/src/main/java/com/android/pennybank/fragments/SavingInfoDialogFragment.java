@@ -1,8 +1,6 @@
 package com.android.pennybank.fragments;
 
-import android.app.Activity;
 import android.app.DatePickerDialog;
-import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,6 +10,7 @@ import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
@@ -25,15 +24,16 @@ import android.widget.TextView;
 import com.android.pennybank.R;
 import com.android.pennybank.data.Product;
 import com.android.pennybank.data.ProductDatabaseWrapper;
+import com.android.pennybank.util.RoundImagesLoader;
+import com.android.pennybank.util.RoundImage;
 
 import java.util.Calendar;
 
-
 public class SavingInfoDialogFragment extends DialogFragment {
-    private Activity mActivity;
-
     private Product mProduct;
 
+    private ImageView mProductImage;
+    private TextView mProductName;
     private EditText mProductPrice;
     private Spinner mDepositFrequency;
     private EditText mSavings;
@@ -50,21 +50,17 @@ public class SavingInfoDialogFragment extends DialogFragment {
         mProduct = product;
     }
 
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        mActivity = activity;
-    }
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+
         Context context = getActivity().getApplicationContext();
 
         View view = inflater.inflate(R.layout.saving_info_dialog_fragment_layout, null);
 
-        ImageView productImage = (ImageView) view.findViewById(R.id.product_image);
-        TextView productName = (TextView) view.findViewById(R.id.product_name_label);
+        mProductImage = (ImageView) view.findViewById(R.id.product_image);
+        mProductName = (TextView) view.findViewById(R.id.product_name_label);
         mProductPrice = (EditText) view.findViewById(R.id.product_price);
         mDepositFrequency = (Spinner) view.findViewById(R.id.deposit_frequency);
         mSavings = (EditText) view.findViewById(R.id.savings);
@@ -82,8 +78,13 @@ public class SavingInfoDialogFragment extends DialogFragment {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mSavingMethod.setAdapter(adapter);
 
-        productImage.setBackgroundResource(context.getResources().getIdentifier(mProduct.getImage(), "drawable", context.getPackageName()));
-        productName.setText(mProduct.getName());
+        RoundImage roundImage = RoundImagesLoader.mRoundImages.get(mProduct.getId());
+        if (roundImage == null) {
+            mProductImage.setImageResource(R.drawable.pennybank_icon);
+        } else {
+            mProductImage.setImageDrawable(roundImage);
+        }
+        mProductName.setText(mProduct.getName());
 
         updateEditTexts();
 
@@ -120,35 +121,17 @@ public class SavingInfoDialogFragment extends DialogFragment {
         mDeposit.setText(String.valueOf(mProduct.getDeposit()));
     }
 
-    private Calendar calendar;
-    private DatePickerDialog.OnDateSetListener datePickerDialog;
-
     private void setListeners() {
-        calendar = Calendar.getInstance();
-
-        datePickerDialog = new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                calendar.set(Calendar.YEAR, year);
-                calendar.set(Calendar.MONTH, monthOfYear);
-                calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-//                mEndDate.setText(Product.DATE_FORMAT.format(calendar.getTime()));
-                mProduct.setEndDate(calendar);
-                ProductDatabaseWrapper.updateProduct(mProduct);
-                updateEditTexts();
-            }
-        };
-
         mProductPrice.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                float oldPrice = mProduct.getPrice();
-                float newPrice = Float.parseFloat(mProductPrice.getText().toString());
+                int oldPrice = mProduct.getPrice();
+                int newPrice = Integer.parseInt(mProductPrice.getText().toString());
                 if (oldPrice != newPrice) {
                     mProduct.setPrice(newPrice);
                     ProductDatabaseWrapper.updateProduct(mProduct);
                     updateEditTexts();
-                    mActivity.sendBroadcast(new Intent().setAction("com.android.pennybank.notifyDataSetChanged"));
+                    getActivity().sendBroadcast(new Intent().setAction("com.android.pennybank.notifyDataSetChanged"));
                 }
             }
         });
@@ -169,13 +152,13 @@ public class SavingInfoDialogFragment extends DialogFragment {
         mSavings.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                float oldSavings = mProduct.getSavings();
-                float newSavings = Float.parseFloat(mSavings.getText().toString());
+                int oldSavings = mProduct.getSavings();
+                int newSavings = Integer.parseInt(mSavings.getText().toString());
                 if (oldSavings != newSavings) {
                     mProduct.setSavings(newSavings);
                     ProductDatabaseWrapper.updateProduct(mProduct);
                     updateEditTexts();
-                    mActivity.sendBroadcast(new Intent().setAction("com.android.pennybank.notifyDataSetChanged"));
+                    getActivity().sendBroadcast(new Intent().setAction("com.android.pennybank.notifyDataSetChanged"));
                 }
             }
         });
@@ -194,16 +177,29 @@ public class SavingInfoDialogFragment extends DialogFragment {
             }
         });
 
+        final Calendar calendar = Calendar.getInstance();
+        final DatePickerDialog.OnDateSetListener datePickerDialog = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                calendar.set(Calendar.YEAR, year);
+                calendar.set(Calendar.MONTH, monthOfYear);
+                calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                mProduct.setEndDate(calendar);
+                ProductDatabaseWrapper.updateProduct(mProduct);
+                updateEditTexts();
+            }
+        };
+
         mEndDate.setInputType(InputType.TYPE_NULL);
         mEndDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 new DatePickerDialog(
-                        mActivity,
+                        getActivity(),
                         datePickerDialog,
-                        mProduct.getEndDate().get(Calendar.YEAR),
-                        mProduct.getEndDate().get(Calendar.MONTH),
-                        mProduct.getEndDate().get(Calendar.DAY_OF_MONTH)).show();
+                        calendar.get(Calendar.YEAR),
+                        calendar.get(Calendar.MONTH),
+                        calendar.get(Calendar.DAY_OF_MONTH)).show();
 
             }
         });
@@ -211,8 +207,8 @@ public class SavingInfoDialogFragment extends DialogFragment {
         mDeposit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                float oldDeposit = mProduct.getDeposit();
-                float newDeposit = Float.parseFloat(mDeposit.getText().toString());
+                int oldDeposit = mProduct.getDeposit();
+                int newDeposit = Integer.parseInt(mDeposit.getText().toString());
                 if (oldDeposit != newDeposit) {
                     mProduct.setDeposit(newDeposit);
                     ProductDatabaseWrapper.updateProduct(mProduct);

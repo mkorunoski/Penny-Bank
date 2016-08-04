@@ -10,14 +10,15 @@ public abstract class ProductDatabaseWrapper {
 
     public static void initDatabase(Context context) {
         mProductDatabase = new ProductDatabaseHelper(context);
-        // REMOVE THESE
-        mProductDatabase.addProduct(new Product("Computer", "electronics", 32000.0f, Product.DEPOSIT_FREQUENCY.MONTHLY, 500.0f));
+    }
+
+    public static void addProduct(Product product) {
+        mProductDatabase.addProduct(product);
     }
 
     public static Product getProduct(int id) {
         return mProductDatabase.getProduct(id);
     }
-
 
     public static ArrayList<Product> getAllProducts() {
         return mProductDatabase.getAllProducts();
@@ -26,4 +27,5 @@ public abstract class ProductDatabaseWrapper {
     public static void updateProduct(Product product) {
         mProductDatabase.updateProduct(product);
     }
+
 }

@@ -1,6 +1,10 @@
 package com.android.pennybank.fragments;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +15,11 @@ import android.widget.TextView;
 import com.android.pennybank.R;
 import com.android.pennybank.data.Product;
 import com.android.pennybank.data.ProductDatabaseWrapper;
+import com.android.pennybank.util.RoundImage;
+import com.android.pennybank.util.RoundImagesLoader;
+import com.android.pennybank.util.Util;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class CustomAdapter extends BaseAdapter {
@@ -51,13 +59,18 @@ public class CustomAdapter extends BaseAdapter {
 
         Product product = products.get(position);
 
-        ImageView ivProductImage = (ImageView)row.findViewById(R.id.product_image);
-        TextView tvProductName = (TextView)row.findViewById(R.id.product_name_label);
-        TextView tvSavingStatus = (TextView)row.findViewById(R.id.saving_status);
+        ImageView productImage = (ImageView) row.findViewById(R.id.product_image);
+        TextView productName = (TextView) row.findViewById(R.id.product_name_label);
+        TextView savingStatus = (TextView) row.findViewById(R.id.saving_status);
 
-        tvProductName.setText(product.getName());
-        tvSavingStatus.setText((product.getPrice() - product.getSavings()) + " ¤ left.");
-        ivProductImage.setBackgroundResource(mContext.getResources().getIdentifier(product.getImage(), "drawable", mContext.getPackageName()));
+        RoundImage roundImage = RoundImagesLoader.mRoundImages.get(product.getId());
+        if (roundImage == null) {
+            productImage.setImageResource(R.drawable.pennybank_icon);
+        } else {
+            productImage.setImageDrawable(roundImage);
+        }
+        productName.setText(product.getName());
+        savingStatus.setText((product.getPrice() - product.getSavings()) + " ¤ left.");
 
         return row;
     }

@@ -48,8 +48,7 @@ public class ShaderHelper {
         final int[] compileStatus = new int[1];
         glGetShaderiv(shaderObjectId, GL_COMPILE_STATUS, compileStatus, 0);
 
-        Log.v(TAG, "Results of compiling source:" + "\n" + shaderCode + "\n:"
-                + glGetShaderInfoLog(shaderObjectId));
+//        Log.v(TAG, "Results of compiling source:" + "\n" + shaderCode + "\n:" + glGetShaderInfoLog(shaderObjectId));
 
         if (compileStatus[0] == 0) {
             glDeleteShader(shaderObjectId);
@@ -79,8 +78,7 @@ public class ShaderHelper {
         final int[] linkStatus = new int[1];
         glGetProgramiv(programObjectId, GL_LINK_STATUS, linkStatus, 0);
 
-        Log.v(TAG, "Results of linking program:\n"
-                + glGetProgramInfoLog(programObjectId));
+//        Log.v(TAG, "Results of linking program:\n" + glGetProgramInfoLog(programObjectId));
 
         if (linkStatus[0] == 0) {
             glDeleteProgram(programObjectId);
@@ -96,8 +94,7 @@ public class ShaderHelper {
 
         final int[] validateStatus = new int[1];
         glGetProgramiv(programObjectId, GL_VALIDATE_STATUS, validateStatus, 0);
-        Log.v(TAG, "Results of validating program: " + validateStatus[0]
-                + "\nLog:" + glGetProgramInfoLog(programObjectId));
+//        Log.v(TAG, "Results of validating program: " + validateStatus[0] + "\nLog:" + glGetProgramInfoLog(programObjectId));
 
         return validateStatus[0] != 0;
     }

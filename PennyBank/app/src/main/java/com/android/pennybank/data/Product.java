@@ -71,20 +71,23 @@ public class Product {
 
     private int id;
     private String name;
-    private String image; // Stored as location to the desired image
-    private float price;
+    private String image; // Stored as path to the desired image
+    private int price;
     private DEPOSIT_FREQUENCY depositFrequency;
     private SAVING_METHOD savingMethod;
-    private float deposit;
-    private float savings;
+    private int deposit;
+    private int savings;
     private Calendar startDate;
     private Calendar endDate;
+
+    private static int REFS = 0;
 
 //  Otkako ke se implementira servisot.
 //  private Alarm m_alram;
 
     /**
      * Constructor that initializes based upon data stored in database
+     * Acts as copy constructor
      *
      * @param id               Product id
      * @param name             Product name
@@ -97,9 +100,9 @@ public class Product {
      * @param startDate        Start date
      * @param endDate          End date
      */
-    public Product(int id, String name, String image, float price,
-                   DEPOSIT_FREQUENCY depositFrequency, SAVING_METHOD savingMethod, float deposit,
-                   float savings, Calendar startDate, Calendar endDate) {
+    public Product(int id, String name, String image, int price,
+                   DEPOSIT_FREQUENCY depositFrequency, SAVING_METHOD savingMethod, int deposit,
+                   int savings, Calendar startDate, Calendar endDate) {
         this.id = id;
         this.name = name;
         this.image = image;
@@ -121,15 +124,17 @@ public class Product {
      * @param depositFrequency Deposit depositFrequency
      * @param deposit          Deposit value
      */
-    public Product(String name, String image, float price, DEPOSIT_FREQUENCY depositFrequency, float deposit) {
-        this.id = (name + String.valueOf(price)).hashCode();
+    public Product(String name, String image, int price, DEPOSIT_FREQUENCY depositFrequency, int deposit) {
+        REFS++;
+//        this.id = (name + String.valueOf(price)).hashCode();
+        this.id = REFS;
         this.name = name;
         this.image = image;
         this.price = price;
         this.depositFrequency = depositFrequency;
         this.savingMethod = SAVING_METHOD.BY_DEPOSIT;
         this.deposit = deposit;
-        this.savings = 0.0f;
+        this.savings = 0;
         this.startDate = Calendar.getInstance();
 
         calcEndDate();
@@ -144,14 +149,16 @@ public class Product {
      * @param depositFrequency Deposit depositFrequency
      * @param endDate          Saving end date
      */
-    public Product(String name, String image, float price, DEPOSIT_FREQUENCY depositFrequency, Calendar endDate) {
-        this.id = (name + String.valueOf(price)).hashCode();
+    public Product(String name, String image, int price, DEPOSIT_FREQUENCY depositFrequency, Calendar endDate) {
+        REFS++;
+//        this.id = (name + String.valueOf(price)).hashCode();
+        this.id = REFS;
         this.name = name;
         this.image = image;
         this.price = price;
         this.depositFrequency = depositFrequency;
         this.savingMethod = SAVING_METHOD.BY_END_DATE;
-        this.savings = 0.0f;
+        this.savings = 0;
         this.startDate = Calendar.getInstance();
         this.endDate = endDate;
 
@@ -189,11 +196,11 @@ public class Product {
     //endregion
 
     //region Getter and setter for price
-    public float getPrice() {
+    public int getPrice() {
         return price;
     }
 
-    public void setPrice(float price) {
+    public void setPrice(int price) {
         this.price = price;
         modify();
     }
@@ -221,22 +228,22 @@ public class Product {
     //endregion
 
     //region Getter and setter for deposit
-    public float getDeposit() {
+    public int getDeposit() {
         return deposit;
     }
 
-    public void setDeposit(float deposit) {
+    public void setDeposit(int deposit) {
         this.deposit = deposit;
-        modify();
+        calcEndDate();
     }
     //endregion
 
     //region Getter and setter for savings
-    public float getSavings() {
+    public int getSavings() {
         return savings;
     }
 
-    public void setSavings(float savings) {
+    public void setSavings(int savings) {
         this.savings = savings;
         modify();
     }
@@ -259,7 +266,7 @@ public class Product {
 
     public void setEndDate(Calendar endDate) {
         this.endDate = endDate;
-        modify();
+        calcDeposit();
     }
     //endregion
 
@@ -280,50 +287,60 @@ public class Product {
         }
     }
 
+    // "MS" suffix stands for milliseconds.
+    private final long TO_DAYS_MS = 1000L * 60 * 60 * 24;
+    private final long TO_WEEKS_MS = TO_DAYS_MS * 7;
+    private final long TO_MONTHS_MS = TO_WEEKS_MS * 12;
+
     private void calcDeposit() {
-        long timeDifference = endDate.getTimeInMillis() - startDate.getTimeInMillis();
-        float balance = price - savings;
+        long timeDifferenceMS = endDate.getTimeInMillis() - startDate.getTimeInMillis();
+
+        int balance = price - savings;
 
         switch (depositFrequency) {
             case DAILY: {
-                if (timeDifference == 0) {
-                    deposit = 0.0f;
+                if (timeDifferenceMS <= TO_DAYS_MS) {
+                    deposit = balance;
                 } else {
-                    int days = (int) (timeDifference / (1000 * 60 * 60 * 24));
+                    int days = (int) (timeDifferenceMS / TO_DAYS_MS);
                     deposit = balance / days;
                 }
                 break;
             }
             case WEEKLY: {
-                if (timeDifference == 0) {
-                    deposit = 0.0f;
+                if (timeDifferenceMS <= TO_WEEKS_MS) {
+                    deposit = balance;
                 } else {
-                    int weeks = (int) (timeDifference / (1000 * 60 * 60 * 24 * 7));
+                    int weeks = (int) (timeDifferenceMS / TO_WEEKS_MS);
                     deposit = balance / weeks;
                 }
                 break;
             }
             case MONTHLY: {
-                if (timeDifference == 0) {
-                    deposit = 0.0f;
+                if (timeDifferenceMS <= TO_MONTHS_MS) {
+                    deposit = balance;
                 } else {
-                    long div = 1000L * 60 * 60 * 24 * 7 * 12;
-                    int months = (int) (timeDifference / div);
+                    int months = (int) (timeDifferenceMS / TO_MONTHS_MS);
                     deposit = balance / months;
                 }
                 break;
             }
         }
 
-        if (Logger.s_enabled) {
-            Log.i("*Product: Product()", "The deposit is: " + String.valueOf(deposit));
+        if (Logger.ENABLED) {
+            Log.i(Logger.TAG, "The deposit is: " + String.valueOf(deposit));
         }
     }
 
     private void calcEndDate() {
         this.endDate = (Calendar) startDate.clone();
-        float balance = price - savings;
-        int increment = (int) (balance / deposit);
+
+        int balance = price - savings;
+
+        int increment = balance / deposit;
+        if (increment == 0) {
+            increment = 1;
+        }
 
         switch (depositFrequency) {
             case DAILY: {
@@ -340,8 +357,8 @@ public class Product {
             }
         }
 
-        if (Logger.s_enabled) {
-            Log.i("*Product: Product()", "The end date is: " + endDate.getTime().toString());
+        if (Logger.ENABLED) {
+            Log.i(Logger.TAG, "The end date is: " + endDate.getTime().toString());
         }
     }
     //endregion

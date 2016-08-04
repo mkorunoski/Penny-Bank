@@ -1,11 +1,8 @@
 package com.android.pennybank.activities;
 
-import android.content.Context;
-import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.android.pennybank.R;
 import com.android.pennybank.data.ProductDatabaseWrapper;
@@ -13,10 +10,25 @@ import com.android.pennybank.fragments.FragmentListener;
 import com.android.pennybank.fragments.NewSavingFormFragment;
 import com.android.pennybank.fragments.StartScreenFragment;
 import com.android.pennybank.fragments.ViewSavingsFragment;
+import com.android.pennybank.util.RoundImagesLoader;
+import com.android.pennybank.util.RoundImage;
+import com.android.pennybank.util.Util;
 
-public class MainActivity extends AppCompatActivity implements FragmentListener {
-
-    public static final String PREF_NAME = "Preferences";
+public class MainActivity extends AppCompatActivity implements FragmentListener, RoundImagesLoader.TaskCompleted {
+    // =============================================================================================
+    // Ovoj metod e povikan od Async taskot so sekoja vcitana bitmapa.
+    // =============================================================================================
+    public void onTaskComplete(Integer id, Bitmap bitmap) {
+        if (bitmap != null) {
+            RoundImage roundedImage = new RoundImage(bitmap);
+            bitmap.recycle();
+            bitmap = null;
+            // =====================================================================================
+            // Vcituvanjeto na bitmapa e dolg proces, zatoa ke gi kesirame.
+            // =====================================================================================
+            RoundImagesLoader.mRoundImages.put(id, roundedImage);
+        }
+    }
 
     public enum FRAGMENTS {
         NULL,
@@ -34,6 +46,10 @@ public class MainActivity extends AppCompatActivity implements FragmentListener 
         setContentView(R.layout.activity_main);
 
         ProductDatabaseWrapper.initDatabase(this);
+        // =========================================================================================
+        // Povikuvame pozadinski proces za vcituvanje na bitmapite.
+        // =========================================================================================
+        new RoundImagesLoader(this, null).execute();
 
         switchFragments(FRAGMENTS.START_SCREEN_FRAGMENT);
         mLastFragment = FRAGMENTS.NULL;
