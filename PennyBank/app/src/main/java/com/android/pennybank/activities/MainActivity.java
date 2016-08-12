@@ -12,7 +12,6 @@ import com.android.pennybank.fragments.StartScreenFragment;
 import com.android.pennybank.fragments.ViewSavingsFragment;
 import com.android.pennybank.util.RoundImagesLoader;
 import com.android.pennybank.util.RoundImage;
-import com.android.pennybank.util.Util;
 
 public class MainActivity extends AppCompatActivity implements FragmentListener, RoundImagesLoader.TaskCompleted {
     // =============================================================================================

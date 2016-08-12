@@ -1,6 +1,7 @@
 package com.android.pennybank.fragments;
 
 import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -20,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 import com.android.pennybank.R;
 import com.android.pennybank.data.Product;
@@ -43,6 +45,7 @@ public class SavingInfoDialogFragment extends DialogFragment {
     private boolean mEndDateEnabled = false;
     private EditText mDeposit;
     private boolean mDepositEnabled = false;
+    private EditText mReminderTime;
 
     private Switch mEdit;
 
@@ -69,7 +72,7 @@ public class SavingInfoDialogFragment extends DialogFragment {
         mSavingMethod = (Spinner) view.findViewById(R.id.saving_method);
         mEndDate = (EditText) view.findViewById(R.id.end_date);
         mDeposit = (EditText) view.findViewById(R.id.deposit);
-
+        mReminderTime = (EditText) view.findViewById(R.id.reminder_time);
         ArrayAdapter<CharSequence> adapter;
         adapter = ArrayAdapter.createFromResource(context, R.array.deposit_frequency, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -77,7 +80,6 @@ public class SavingInfoDialogFragment extends DialogFragment {
         adapter = ArrayAdapter.createFromResource(context, R.array.saving_method, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mSavingMethod.setAdapter(adapter);
-
         RoundImage roundImage = RoundImagesLoader.mRoundImages.get(mProduct.getId());
         if (roundImage == null) {
             mProductImage.setImageResource(R.drawable.pennybank_icon);
@@ -85,19 +87,18 @@ public class SavingInfoDialogFragment extends DialogFragment {
             mProductImage.setImageDrawable(roundImage);
         }
         mProductName.setText(mProduct.getName());
-
-        updateEditTexts();
-
-        setEnableEditableFields(true);
-
         mEdit = (Switch) view.findViewById(R.id.edit);
 
+        updateEditTexts();
         setListeners();
+
+        setEnabledBySavingMethod();
+        setEnabledEditableFields(true);
 
         return view;
     }
 
-    private void setEnableEditableFields(boolean status) {
+    private void setEnabledEditableFields(boolean status) {
         mProductPrice.setEnabled(status);
         mDepositFrequency.setEnabled(status);
         mSavings.setEnabled(status);
@@ -109,6 +110,7 @@ public class SavingInfoDialogFragment extends DialogFragment {
             mEndDate.setEnabled(false);
             mDeposit.setEnabled(false);
         }
+        mReminderTime.setEnabled(status);
     }
 
     private void updateEditTexts() {
@@ -119,7 +121,10 @@ public class SavingInfoDialogFragment extends DialogFragment {
         mSavingMethod.setSelection(mProduct.getSavingMethod().getValue());
         mEndDate.setText(Product.DATE_FORMAT.format(mProduct.getEndDate().getTime()));
         mDeposit.setText(String.valueOf(mProduct.getDeposit()));
+        mReminderTime.setText(Product.HOUR_FORMAT.format(mProduct.getReminderTime().getTime()));
     }
+
+    private Calendar calendar = Calendar.getInstance();
 
     private void setListeners() {
         mProductPrice.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -139,9 +144,11 @@ public class SavingInfoDialogFragment extends DialogFragment {
         mDepositFrequency.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                mProduct.setDepositFrequency(Product.DEPOSIT_FREQUENCY.fromValue(position));
-                ProductDatabaseWrapper.updateProduct(mProduct);
-                updateEditTexts();
+                if (Product.DEPOSIT_FREQUENCY.fromValue(position) != mProduct.getDepositFrequency()) {
+                    mProduct.setDepositFrequency(Product.DEPOSIT_FREQUENCY.fromValue(position));
+                    ProductDatabaseWrapper.updateProduct(mProduct);
+                    updateEditTexts();
+                }
             }
 
             @Override
@@ -166,10 +173,12 @@ public class SavingInfoDialogFragment extends DialogFragment {
         mSavingMethod.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                mProduct.setSavingMethod(Product.SAVING_METHOD.fromValue(position));
-                ProductDatabaseWrapper.updateProduct(mProduct);
-                updateEditTexts();
-                changeVisibility();
+                if (Product.SAVING_METHOD.fromValue(position) != mProduct.getSavingMethod()) {
+                    mProduct.setSavingMethod(Product.SAVING_METHOD.fromValue(position));
+                    ProductDatabaseWrapper.updateProduct(mProduct);
+                    updateEditTexts();
+                    setEnabledBySavingMethod();
+                }
             }
 
             @Override
@@ -177,16 +186,17 @@ public class SavingInfoDialogFragment extends DialogFragment {
             }
         });
 
-        final Calendar calendar = Calendar.getInstance();
         final DatePickerDialog.OnDateSetListener datePickerDialog = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 calendar.set(Calendar.YEAR, year);
                 calendar.set(Calendar.MONTH, monthOfYear);
                 calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                mProduct.setEndDate(calendar);
-                ProductDatabaseWrapper.updateProduct(mProduct);
-                updateEditTexts();
+                if (calendar.getTimeInMillis() != mProduct.getEndDate().getTimeInMillis()) {
+                    mProduct.setEndDate(calendar);
+                    ProductDatabaseWrapper.updateProduct(mProduct);
+                    updateEditTexts();
+                }
             }
         };
 
@@ -217,15 +227,36 @@ public class SavingInfoDialogFragment extends DialogFragment {
             }
         });
 
+        mReminderTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Calendar calendar = Calendar.getInstance();
+                TimePickerDialog timePicker = new TimePickerDialog(getActivity(), new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                        calendar.set(Calendar.HOUR_OF_DAY, selectedHour);
+                        calendar.set(Calendar.MINUTE, selectedMinute);
+                        if (calendar.getTimeInMillis() != mProduct.getReminderTime().getTimeInMillis()) {
+                            mProduct.setReminderTime(calendar);
+                            ProductDatabaseWrapper.updateProduct(mProduct);
+                            updateEditTexts();
+                        }
+                    }
+                }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true);
+                timePicker.setTitle("Set Reminder");
+                timePicker.show();
+            }
+        });
+
         mEdit.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                setEnableEditableFields(isChecked);
+                setEnabledEditableFields(isChecked);
             }
         });
     }
 
-    private void changeVisibility() {
+    private void setEnabledBySavingMethod() {
         Product.SAVING_METHOD savingMethod = mProduct.getSavingMethod();
         if (savingMethod == Product.SAVING_METHOD.BY_DEPOSIT) {
             mEndDateEnabled = false;

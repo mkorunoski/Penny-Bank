@@ -89,10 +89,10 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/end_date_label"
-        android:layout_toLeftOf="@+id/save"
         android:layout_toStartOf="@+id/save"
         android:ems="10"
-        android:inputType="date" />
+        android:inputType="date"
+        android:layout_toLeftOf="@+id/save" />
 
     <EditText
         android:id="@+id/deposit"
@@ -102,9 +102,9 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_toEndOf="@+id/save"
-        android:layout_toRightOf="@+id/save"
         android:ems="10"
-        android:inputType="number" />
+        android:inputType="number"
+        android:layout_toRightOf="@+id/save" />
 
     <EditText
         android:id="@+id/product_price"
@@ -122,9 +122,9 @@
         android:id="@+id/save"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="Save"
         android:layout_below="@+id/deposit"
-        android:layout_centerHorizontal="true"
-        android:text="Save" />
+        android:layout_centerHorizontal="true" />
 
     <Button
         android:id="@+id/choose_picture"

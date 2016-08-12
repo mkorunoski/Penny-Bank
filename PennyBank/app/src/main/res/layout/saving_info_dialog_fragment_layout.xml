@@ -120,6 +120,17 @@
                 android:text="Deposit:"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
+            <TextView
+                android:id="@+id/reminder_time_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_column="0"
+                android:layout_gravity="right"
+                android:layout_row="7"
+                android:padding="4dp"
+                android:text="Reminder time:"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
 
             <EditText
                 android:id="@+id/product_price"
@@ -183,6 +194,16 @@
                 android:layout_row="6"
                 android:ems="10"
                 android:inputType="number" />
+
+            <EditText
+                android:id="@+id/reminder_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_column="1"
+                android:layout_row="7"
+                android:ems="10"
+                android:focusableInTouchMode="false"
+                android:inputType="date" />
 
         </GridLayout>
 

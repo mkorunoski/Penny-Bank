@@ -1,8 +1,10 @@
 package com.android.pennybank.data;
 
+import android.content.Context;
 import android.util.*;
 
 import com.android.pennybank.util.Logger;
+import com.android.pennybank.util.Util;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -68,10 +70,13 @@ public class Product {
     }
 
     public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
+    public static final SimpleDateFormat HOUR_FORMAT = new SimpleDateFormat("hh:mm");
 
-    private int id;
+    private Context context;
+
+    private int id;                             // The id will be used as the pending intent's request code
     private String name;
-    private String image; // Stored as path to the desired image
+    private String image;                       // Stored as path to the desired image
     private int price;
     private DEPOSIT_FREQUENCY depositFrequency;
     private SAVING_METHOD savingMethod;
@@ -79,30 +84,29 @@ public class Product {
     private int savings;
     private Calendar startDate;
     private Calendar endDate;
-
-    private static int REFS = 0;
-
-//  Otkako ke se implementira servisot.
-//  private Alarm m_alram;
+    private Calendar reminderTime;
 
     /**
      * Constructor that initializes based upon data stored in database
      * Acts as copy constructor
      *
+     * @param context          Application context
      * @param id               Product id
      * @param name             Product name
      * @param image            Product image
      * @param price            Product price
-     * @param depositFrequency Deposit depositFrequency
-     * @param savingMethod     Saving savingMethod
+     * @param depositFrequency Deposit frequency
+     * @param savingMethod     Saving method
      * @param deposit          Deposit value
      * @param savings          Current savings
      * @param startDate        Start date
      * @param endDate          End date
+     * @param reminderTime     Reminder time
      */
-    public Product(int id, String name, String image, int price,
+    public Product(Context context, int id, String name, String image, int price,
                    DEPOSIT_FREQUENCY depositFrequency, SAVING_METHOD savingMethod, int deposit,
-                   int savings, Calendar startDate, Calendar endDate) {
+                   int savings, Calendar startDate, Calendar endDate, Calendar reminderTime) {
+        this.context = context;
         this.id = id;
         this.name = name;
         this.image = image;
@@ -113,21 +117,24 @@ public class Product {
         this.savings = savings;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.reminderTime = reminderTime;
     }
 
     /**
      * Constructor that initializes based upon the deposit value
      *
+     * @param context          Application context
      * @param name             Product name
      * @param image            Product image
      * @param price            Product price
-     * @param depositFrequency Deposit depositFrequency
+     * @param depositFrequency Deposit frequency
      * @param deposit          Deposit value
+     * @param reminderTime     Reminder time
      */
-    public Product(String name, String image, int price, DEPOSIT_FREQUENCY depositFrequency, int deposit) {
-        REFS++;
+    public Product(Context context, String name, String image, int price, DEPOSIT_FREQUENCY depositFrequency, int deposit, Calendar reminderTime) {
+        this.context = context;
 //        this.id = (name + String.valueOf(price)).hashCode();
-        this.id = REFS;
+        this.id = Util.incrementProductInstances(context);
         this.name = name;
         this.image = image;
         this.price = price;
@@ -136,6 +143,7 @@ public class Product {
         this.deposit = deposit;
         this.savings = 0;
         this.startDate = Calendar.getInstance();
+        this.reminderTime = (Calendar) reminderTime.clone();
 
         calcEndDate();
     }
@@ -143,16 +151,18 @@ public class Product {
     /**
      * Constructor that initializes based upon the date when the user wants to purchase the product
      *
+     * @param context          Application context
      * @param name             Product name
      * @param image            Product image
      * @param price            Product price
-     * @param depositFrequency Deposit depositFrequency
+     * @param depositFrequency Deposit frequency
      * @param endDate          Saving end date
+     * @param reminderTime     Reminder time
      */
-    public Product(String name, String image, int price, DEPOSIT_FREQUENCY depositFrequency, Calendar endDate) {
-        REFS++;
+    public Product(Context context, String name, String image, int price, DEPOSIT_FREQUENCY depositFrequency, Calendar endDate, Calendar reminderTime) {
+        this.context = context;
 //        this.id = (name + String.valueOf(price)).hashCode();
-        this.id = REFS;
+        this.id = Util.incrementProductInstances(context);
         this.name = name;
         this.image = image;
         this.price = price;
@@ -161,6 +171,7 @@ public class Product {
         this.savings = 0;
         this.startDate = Calendar.getInstance();
         this.endDate = endDate;
+        this.reminderTime = (Calendar) reminderTime.clone();
 
         calcDeposit();
     }
@@ -214,6 +225,7 @@ public class Product {
     public void setDepositFrequency(DEPOSIT_FREQUENCY depositFrequency) {
         this.depositFrequency = depositFrequency;
         modify();
+        Util.startAlarm(context, this);
     }
     //endregion
 
@@ -270,11 +282,24 @@ public class Product {
     }
     //endregion
 
+    //region Getter and setter for reminderTime
+    public Calendar getReminderTime() {
+        return reminderTime;
+    }
+
+    public void setReminderTime(Calendar reminderTime) {
+        this.reminderTime = reminderTime;
+        Util.startAlarm(context, this);
+    }
+    //endregion
+
     //region Additional methods
     public void deposit() {
         savings += deposit;
+    }
 
-//      Tuka ke se postavuva alarmot za datumot na sledeniot depozit.
+    public int getBalance() {
+        return price - savings;
     }
     //endregion
 
@@ -295,7 +320,7 @@ public class Product {
     private void calcDeposit() {
         long timeDifferenceMS = endDate.getTimeInMillis() - startDate.getTimeInMillis();
 
-        int balance = price - savings;
+        int balance = getBalance();
 
         switch (depositFrequency) {
             case DAILY: {
@@ -335,7 +360,7 @@ public class Product {
     private void calcEndDate() {
         this.endDate = (Calendar) startDate.clone();
 
-        int balance = price - savings;
+        int balance = getBalance();
 
         int increment = balance / deposit;
         if (increment == 0) {

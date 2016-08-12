@@ -11,11 +11,14 @@ import com.android.pennybank.fragments.ViewSavingsFragment;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.StringTokenizer;
 
 /**
  * A database of products.
  */
 public class ProductDatabaseHelper extends SQLiteOpenHelper {
+
+    private Context context;
 
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "productsContainer";
@@ -32,9 +35,11 @@ public class ProductDatabaseHelper extends SQLiteOpenHelper {
     public static final String KEY_SAVINGS = "savings";
     public static final String KEY_START_DATE = "startDate";
     public static final String KEY_END_DATE = "endDate";
+    public static final String KEY_REMINDER_TIME = "reminderTime";
 
     public ProductDatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        this.context = context;
     }
 
     @Override
@@ -49,10 +54,10 @@ public class ProductDatabaseHelper extends SQLiteOpenHelper {
                 + KEY_DEPOSIT + " REAL,"
                 + KEY_SAVINGS + " REAL,"
                 + KEY_START_DATE + " DATE,"
-                + KEY_END_DATE + " DATE" + ")";
+                + KEY_END_DATE + " DATE,"
+                + KEY_REMINDER_TIME + " DATE" + ")";
 
         db.execSQL(CREATE_PRODUCTS_TABLE);
-
     }
 
     @Override
@@ -75,6 +80,7 @@ public class ProductDatabaseHelper extends SQLiteOpenHelper {
         values.put(KEY_SAVINGS, product.getSavings());
         values.put(KEY_START_DATE, Product.DATE_FORMAT.format(product.getStartDate().getTime()));
         values.put(KEY_END_DATE, Product.DATE_FORMAT.format(product.getEndDate().getTime()));
+        values.put(KEY_REMINDER_TIME, Product.HOUR_FORMAT.format(product.getReminderTime().getTime()));
 
         db.insert(TABLE_PRODUCTS, null, values);
         db.close();
@@ -86,7 +92,7 @@ public class ProductDatabaseHelper extends SQLiteOpenHelper {
         Cursor cursor = db.query(TABLE_PRODUCTS,
                 new String[]{KEY_ID, KEY_PRODUCT_NAME, KEY_PRODUCT_IMAGE, KEY_PRODUCT_PRICE,
                         KEY_DEPOSIT_FREQUENCY, KEY_SAVING_METHOD, KEY_DEPOSIT, KEY_SAVINGS,
-                        KEY_START_DATE, KEY_END_DATE},
+                        KEY_START_DATE, KEY_END_DATE, KEY_REMINDER_TIME},
                 KEY_ID + "=?",
                 new String[]{String.valueOf(id)}, null, null, null, null);
 
@@ -121,14 +127,17 @@ public class ProductDatabaseHelper extends SQLiteOpenHelper {
     private Product initProduct(Cursor cursor) {
         Calendar startDate = Calendar.getInstance();
         Calendar endDate = Calendar.getInstance();
+        Calendar reminderTime = Calendar.getInstance();
         try {
             startDate.setTime(Product.DATE_FORMAT.parse(cursor.getString(8)));
             endDate.setTime(Product.DATE_FORMAT.parse(cursor.getString(9)));
+            reminderTime.setTime(Product.HOUR_FORMAT.parse(cursor.getString(10)));
         } catch (ParseException pe) {
             pe.printStackTrace();
         }
 
         Product product = new Product(
+                context,
                 Integer.parseInt(cursor.getString(0)),                                      // id
                 cursor.getString(1),                                                        // name
                 cursor.getString(2),                                                        // image
@@ -138,7 +147,8 @@ public class ProductDatabaseHelper extends SQLiteOpenHelper {
                 Integer.parseInt(cursor.getString(6)),                                      // deposit
                 Integer.parseInt(cursor.getString(7)),                                      // savings
                 startDate,                                                                  // startDate
-                endDate                                                                     // endDate
+                endDate,                                                                    // endDate
+                reminderTime                                                                // reminderTime
         );
 
         return product;
@@ -164,6 +174,7 @@ public class ProductDatabaseHelper extends SQLiteOpenHelper {
         values.put(KEY_SAVINGS, product.getSavings());
         values.put(KEY_START_DATE, Product.DATE_FORMAT.format(product.getStartDate().getTime()));
         values.put(KEY_END_DATE, Product.DATE_FORMAT.format(product.getEndDate().getTime()));
+        values.put(KEY_REMINDER_TIME, Product.HOUR_FORMAT.format(product.getReminderTime().getTime()));
 
         int status =  db.update(TABLE_PRODUCTS, values, KEY_ID + " = ?",
                 new String[]{String.valueOf(product.getId())});

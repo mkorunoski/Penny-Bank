@@ -1,9 +1,12 @@
 package com.android.pennybank.fragments;
 
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Fragment;
+import android.app.PendingIntent;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -22,9 +25,11 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 import com.android.pennybank.R;
 import com.android.pennybank.activities.MainActivity;
+import com.android.pennybank.alarm.AlarmReceiver;
 import com.android.pennybank.data.Product;
 import com.android.pennybank.data.ProductDatabaseWrapper;
 import com.android.pennybank.util.Logger;
@@ -38,6 +43,8 @@ public class NewSavingFormFragment extends Fragment {
     private static final int CHOOSE_PICTURE = 100;
     private FragmentListener mFragmentListener;
 
+    private Product mProduct;
+
     private EditText mProductName;
     private String mProductImage;
     private Button mChoosePicture;
@@ -48,6 +55,7 @@ public class NewSavingFormFragment extends Fragment {
     private TextView mEndDateLabel;
     private EditText mDeposit;
     private TextView mDepositLabel;
+    private Calendar mReminderTime;
     private Button mSave;
 
     @Override
@@ -92,6 +100,7 @@ public class NewSavingFormFragment extends Fragment {
         mEndDateLabel = (TextView) view.findViewById(R.id.end_date_label);
         mDeposit = (EditText) view.findViewById(R.id.deposit);
         mDepositLabel = (TextView) view.findViewById(R.id.deposit_label);
+        mReminderTime = Calendar.getInstance();
         mSave = (Button) view.findViewById(R.id.save);
 
         mEndDate.setEnabled(false);
@@ -154,10 +163,12 @@ public class NewSavingFormFragment extends Fragment {
                 Product.SAVING_METHOD savingMethod = Product.SAVING_METHOD.fromValue(mSavingMethod.getSelectedItemPosition());
                 String deposit = mDeposit.getText().toString();
                 Calendar endDate = Calendar.getInstance();
-                try {
-                    endDate.setTime(Product.DATE_FORMAT.parse(mEndDate.getText().toString()));
-                } catch (ParseException e) {
-                    e.printStackTrace();
+                if (savingMethod == Product.SAVING_METHOD.BY_END_DATE && !mEndDate.getText().toString().equals("")) {
+                    try {
+                        endDate.setTime(Product.DATE_FORMAT.parse(mEndDate.getText().toString()));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
                 }
 
                 if (productName.equals("")) {
@@ -174,7 +185,7 @@ public class NewSavingFormFragment extends Fragment {
                     alertEmptyFields();
                     return;
                 }
-                if (savingMethod == Product.SAVING_METHOD.BY_END_DATE && endDate.equals("")) {
+                if (savingMethod == Product.SAVING_METHOD.BY_END_DATE && endDate == Calendar.getInstance()) {
                     mEndDate.requestFocus();
                     alertEmptyFields();
                     return;
@@ -185,23 +196,43 @@ public class NewSavingFormFragment extends Fragment {
                     return;
                 }
 
-                Product product = null;
+                // If everything went OK...
                 if (savingMethod == Product.SAVING_METHOD.BY_DEPOSIT) {
-                    product = new Product(productName, mProductImage, Integer.parseInt(productPrice), depositFrequency, Integer.parseInt(deposit));
+                    mProduct = new Product(getActivity(), productName, mProductImage, Integer.parseInt(productPrice),
+                            depositFrequency, Integer.parseInt(deposit), mReminderTime);
                 }
                 if (savingMethod == Product.SAVING_METHOD.BY_END_DATE) {
-                    product = new Product(productName, mProductImage, Integer.parseInt(productPrice), depositFrequency, endDate);
+                    mProduct = new Product(getActivity(), productName, mProductImage, Integer.parseInt(productPrice),
+                            depositFrequency, endDate, mReminderTime);
                 }
 
-                ProductDatabaseWrapper.addProduct(product);
-                new RoundImagesLoader(getActivity(), product).execute();
-
-                notifySuccess();
+                setReminderAndAddToDatabase();
             }
         });
     }
 
-    public void openImageChooser() {
+    private void setReminderAndAddToDatabase() {
+        final Calendar calendar = Calendar.getInstance();
+        TimePickerDialog timePicker = new TimePickerDialog(getActivity(), new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                mReminderTime = Calendar.getInstance();
+                mReminderTime.set(Calendar.HOUR_OF_DAY, selectedHour);
+                mReminderTime.set(Calendar.MINUTE, selectedMinute);
+
+                mProduct.setReminderTime(mReminderTime);
+
+                ProductDatabaseWrapper.addProduct(mProduct);
+                new RoundImagesLoader(getActivity(), mProduct).execute();
+
+                notifySuccess();
+            }
+        }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true);
+        timePicker.setTitle("Set Reminder");
+        timePicker.show();
+    }
+
+    private void openImageChooser() {
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
