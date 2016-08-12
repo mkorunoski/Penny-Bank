@@ -11,21 +11,21 @@ import com.android.pennybank.fragments.NewSavingFormFragment;
 import com.android.pennybank.fragments.StartScreenFragment;
 import com.android.pennybank.fragments.ViewSavingsFragment;
 import com.android.pennybank.util.RoundImagesLoader;
+import com.android.pennybank.util.RoundImagesLoader.TaskCompleted;
 import com.android.pennybank.util.RoundImage;
 
-public class MainActivity extends AppCompatActivity implements FragmentListener, RoundImagesLoader.TaskCompleted {
+public class MainActivity extends AppCompatActivity implements FragmentListener, TaskCompleted {
     // =============================================================================================
     // Ovoj metod e povikan od Async taskot so sekoja vcitana bitmapa.
     // =============================================================================================
     public void onTaskComplete(Integer id, Bitmap bitmap) {
         if (bitmap != null) {
             RoundImage roundedImage = new RoundImage(bitmap);
-            bitmap.recycle();
-            bitmap = null;
             // =====================================================================================
             // Vcituvanjeto na bitmapa e dolg proces, zatoa ke gi kesirame.
             // =====================================================================================
             RoundImagesLoader.mRoundImages.put(id, roundedImage);
+            bitmap.recycle();
         }
     }
 

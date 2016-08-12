@@ -1,6 +1,5 @@
 package com.android.pennybank.util;
 
-import android.app.Fragment;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -8,6 +7,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.android.pennybank.data.Product;
 import com.android.pennybank.data.ProductDatabaseWrapper;
@@ -22,7 +22,7 @@ public class RoundImagesLoader extends AsyncTask {
         void onTaskComplete(Integer id, Bitmap bitmap);
     }
 
-    // This is static hash map for caching purpose.
+//    This is static hash map for caching purpose.
     public static HashMap<Integer, RoundImage> mRoundImages = new HashMap<>();
 
     private Context mContext;
@@ -83,6 +83,7 @@ public class RoundImagesLoader extends AsyncTask {
     protected void onProgressUpdate(Object[] values) {
         super.onProgressUpdate(values);
         mCallback.onTaskComplete(mId, mBitmap);
+        Toast.makeText(mContext, "Loaded bitmap " + mId + " of " + mRoundImages.size(), Toast.LENGTH_LONG).show();
     }
 
     @Override

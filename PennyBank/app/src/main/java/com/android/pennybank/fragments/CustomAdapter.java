@@ -70,7 +70,7 @@ public class CustomAdapter extends BaseAdapter {
             productImage.setImageDrawable(roundImage);
         }
         productName.setText(product.getName());
-        savingStatus.setText((product.getPrice() - product.getSavings()) + " ¤ left.");
+        savingStatus.setText(product.getBalance() + " ¤ left.");
 
         return row;
     }
