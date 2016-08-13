@@ -24,6 +24,10 @@ public abstract class ProductDatabaseWrapper {
         return mProductDatabase.getAllProducts();
     }
 
+    public static void deleteProduct(int id) {
+        mProductDatabase.deleteProduct(id);
+    }
+
     public static void updateProduct(Product product) {
         mProductDatabase.updateProduct(product);
     }

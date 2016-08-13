@@ -32,7 +32,7 @@ import com.android.pennybank.data.Product.DEPOSIT_FREQUENCY;
 import com.android.pennybank.data.Product.SAVING_METHOD;
 import com.android.pennybank.data.ProductDatabaseWrapper;
 import com.android.pennybank.util.Logger;
-import com.android.pennybank.data.RoundImagesLoader;
+import com.android.pennybank.data.BitmapsLoader;
 import com.android.pennybank.util.Util;
 
 import java.text.ParseException;
@@ -218,7 +218,7 @@ public class NewSavingFormFragment extends Fragment {
                 mProduct.setReminderTime(calendar);
 
                 ProductDatabaseWrapper.addProduct(mProduct);
-                new RoundImagesLoader(getActivity(), mProduct).execute();
+                new BitmapsLoader(getActivity(), mProduct).execute();
 
                 notifySuccess();
             }

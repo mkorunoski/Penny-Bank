@@ -11,16 +11,12 @@ import com.android.pennybank.R;
 import com.android.pennybank.data.Product;
 import com.android.pennybank.data.ProductDatabaseWrapper;
 import com.android.pennybank.util.Constants;
-import com.android.pennybank.util.RoundImage;
-import com.android.pennybank.data.RoundImagesLoader;
 
 public class AlarmReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
         Product product = ProductDatabaseWrapper.getProduct(intent.getExtras().getInt(Constants.KEY_PRODUCT_ID));
-//        This round image should be used as notification icon.
-//        RoundImage roundImage = RoundImagesLoader.mRoundImages.get(product.getId());
 
         Intent i = new Intent(context, NotificationButtonClickReceiver.class);
         i.putExtra(Constants.KEY_PRODUCT_ID, product.getId());

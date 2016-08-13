@@ -25,10 +25,9 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.android.pennybank.R;
+import com.android.pennybank.data.BitmapsLoader;
 import com.android.pennybank.data.Product;
 import com.android.pennybank.data.ProductDatabaseWrapper;
-import com.android.pennybank.data.RoundImagesLoader;
-import com.android.pennybank.util.RoundImage;
 
 import java.util.Calendar;
 
@@ -81,14 +80,11 @@ public class SavingInfoDialogFragment extends DialogFragment {
         adapter = ArrayAdapter.createFromResource(context, R.array.saving_method, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mSavingMethod.setAdapter(adapter);
-//        RoundImage roundImage = RoundImagesLoader.mRoundImages.get(mProduct.getId());
-        Bitmap roundImage = RoundImagesLoader.mRoundImages.get(mProduct.getId());
-        if (roundImage == null) {
+        Bitmap bitmap = BitmapsLoader.mBitmaps.get(mProduct.getId());
+        if (bitmap == null) {
             mProductImage.setImageResource(R.drawable.pennybank_icon);
         } else {
-//            TODO: This line throws Fatal signal 11 (SIGSEGV), code 1, fault addr ... in tid ... (RenderThread)
-//            mProductImage.setImageResource(R.drawable.pennybank_icon);
-            mProductImage.setImageBitmap(roundImage);
+            mProductImage.setImageBitmap(bitmap);
         }
         mProductName.setText(mProduct.getName());
         mEdit = (Switch) view.findViewById(R.id.edit);
@@ -140,6 +136,7 @@ public class SavingInfoDialogFragment extends DialogFragment {
                     mProduct.setPrice(newPrice);
                     ProductDatabaseWrapper.updateProduct(mProduct);
                     updateEditTexts();
+                    // Update list view on the change.
                     getActivity().sendBroadcast(new Intent().setAction("com.android.pennybank.notifyDataSetChanged"));
                 }
             }
@@ -169,6 +166,7 @@ public class SavingInfoDialogFragment extends DialogFragment {
                     mProduct.setSavings(newSavings);
                     ProductDatabaseWrapper.updateProduct(mProduct);
                     updateEditTexts();
+                    // Update list view on the change.
                     getActivity().sendBroadcast(new Intent().setAction("com.android.pennybank.notifyDataSetChanged"));
                 }
             }

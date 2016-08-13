@@ -2,7 +2,6 @@ package com.android.pennybank.fragments;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,11 +10,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.pennybank.R;
+import com.android.pennybank.data.BitmapsLoader;
 import com.android.pennybank.data.Product;
 import com.android.pennybank.data.ProductDatabaseWrapper;
-import com.android.pennybank.util.Logger;
-import com.android.pennybank.util.RoundImage;
-import com.android.pennybank.data.RoundImagesLoader;
 
 import java.util.ArrayList;
 
@@ -60,14 +57,11 @@ public class CustomAdapter extends BaseAdapter {
         TextView productName = (TextView) row.findViewById(R.id.product_name_label);
         TextView savingStatus = (TextView) row.findViewById(R.id.saving_status);
 
-//        RoundImage roundImage = RoundImagesLoader.mRoundImages.get(product.getId());
-        Bitmap roundImage = RoundImagesLoader.mRoundImages.get(product.getId());
-        if (roundImage == null) {
+        Bitmap bitmap = BitmapsLoader.mBitmaps.get(product.getId());
+        if (bitmap == null) {
             productImage.setImageResource(R.drawable.pennybank_icon);
         } else {
-//            TODO: This line throws Fatal signal 11 (SIGSEGV), code 1, fault addr ... in tid ... (RenderThread)
-//            productImage.setImageDrawable(roundImage);
-            productImage.setImageBitmap(roundImage);
+            productImage.setImageBitmap(bitmap);
         }
         productName.setText(product.getName());
         savingStatus.setText(product.getBalance() + " ¤ left.");
