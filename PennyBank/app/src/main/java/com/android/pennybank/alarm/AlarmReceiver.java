@@ -12,7 +12,7 @@ import com.android.pennybank.data.Product;
 import com.android.pennybank.data.ProductDatabaseWrapper;
 import com.android.pennybank.util.Constants;
 import com.android.pennybank.util.RoundImage;
-import com.android.pennybank.util.RoundImagesLoader;
+import com.android.pennybank.data.RoundImagesLoader;
 
 public class AlarmReceiver extends BroadcastReceiver {
 
@@ -20,7 +20,7 @@ public class AlarmReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Product product = ProductDatabaseWrapper.getProduct(intent.getExtras().getInt(Constants.KEY_PRODUCT_ID));
 //        This round image should be used as notification icon.
-        RoundImage roundImage = RoundImagesLoader.mRoundImages.get(product.getId());
+//        RoundImage roundImage = RoundImagesLoader.mRoundImages.get(product.getId());
 
         Intent i = new Intent(context, NotificationButtonClickReceiver.class);
         i.putExtra(Constants.KEY_PRODUCT_ID, product.getId());
@@ -29,9 +29,11 @@ public class AlarmReceiver extends BroadcastReceiver {
                 .setSmallIcon(R.drawable.pennybank_icon)
                 .setContentTitle(product.getName())
                 .setContentText("Deposit " + product.getDeposit() + " ¤ in your penny bank!")
-                .addAction(R.drawable.pennybank_icon, "Deposit", pendingIntent);
+                .addAction(R.drawable.pennybank_icon, "Deposit", pendingIntent)
+                .setAutoCancel(false)
+                .setOngoing(true);
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
-        notificationManager.notify(Constants.NOTIFICATION_ID, builder.build());
+        notificationManager.notify(product.getId(), builder.build());
     }
 
 }

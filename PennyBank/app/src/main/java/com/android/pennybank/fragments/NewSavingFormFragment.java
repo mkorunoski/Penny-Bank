@@ -32,7 +32,7 @@ import com.android.pennybank.data.Product.DEPOSIT_FREQUENCY;
 import com.android.pennybank.data.Product.SAVING_METHOD;
 import com.android.pennybank.data.ProductDatabaseWrapper;
 import com.android.pennybank.util.Logger;
-import com.android.pennybank.util.RoundImagesLoader;
+import com.android.pennybank.data.RoundImagesLoader;
 import com.android.pennybank.util.Util;
 
 import java.text.ParseException;
@@ -197,8 +197,7 @@ public class NewSavingFormFragment extends Fragment {
                 if (savingMethod == SAVING_METHOD.BY_DEPOSIT) {
                     mProduct = new Product(getActivity(), productName, mProductImage, Integer.parseInt(productPrice),
                             depositFrequency, Integer.parseInt(deposit), Calendar.getInstance());
-                }
-                if (savingMethod == SAVING_METHOD.BY_END_DATE) {
+                } else if (savingMethod == SAVING_METHOD.BY_END_DATE) {
                     mProduct = new Product(getActivity(), productName, mProductImage, Integer.parseInt(productPrice),
                             depositFrequency, endDate, Calendar.getInstance());
                 }

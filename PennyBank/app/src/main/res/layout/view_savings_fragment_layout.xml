@@ -6,17 +6,17 @@
     android:orientation="vertical">
 
     <ListView
-        android:id="@+id/lv_savings"
+        android:id="@+id/savings"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/btn_back"
+        android:layout_above="@+id/back"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:choiceMode="singleChoice" />
 
     <Button
-        android:id="@+id/btn_back"
+        android:id="@+id/back"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

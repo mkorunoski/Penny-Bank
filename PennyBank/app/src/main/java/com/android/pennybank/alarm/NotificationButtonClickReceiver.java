@@ -21,7 +21,7 @@ public class NotificationButtonClickReceiver extends BroadcastReceiver {
                 "Your balance is: " + product.getBalance() + " ¤.",
                 Toast.LENGTH_LONG).show();
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
-        notificationManager.cancel(Constants.NOTIFICATION_ID);
+        notificationManager.cancel(product.getId());
 
         if(product.getBalance() <= 0) {
             // TODO: You have enough savings to purchase the product. Notify the user.

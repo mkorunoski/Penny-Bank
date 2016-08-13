@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.app.DialogFragment;
@@ -26,7 +27,7 @@ import android.widget.TimePicker;
 import com.android.pennybank.R;
 import com.android.pennybank.data.Product;
 import com.android.pennybank.data.ProductDatabaseWrapper;
-import com.android.pennybank.util.RoundImagesLoader;
+import com.android.pennybank.data.RoundImagesLoader;
 import com.android.pennybank.util.RoundImage;
 
 import java.util.Calendar;
@@ -80,11 +81,14 @@ public class SavingInfoDialogFragment extends DialogFragment {
         adapter = ArrayAdapter.createFromResource(context, R.array.saving_method, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mSavingMethod.setAdapter(adapter);
-        RoundImage roundImage = RoundImagesLoader.mRoundImages.get(mProduct.getId());
+//        RoundImage roundImage = RoundImagesLoader.mRoundImages.get(mProduct.getId());
+        Bitmap roundImage = RoundImagesLoader.mRoundImages.get(mProduct.getId());
         if (roundImage == null) {
             mProductImage.setImageResource(R.drawable.pennybank_icon);
         } else {
-            mProductImage.setImageDrawable(roundImage);
+//            TODO: This line throws Fatal signal 11 (SIGSEGV), code 1, fault addr ... in tid ... (RenderThread)
+//            mProductImage.setImageResource(R.drawable.pennybank_icon);
+            mProductImage.setImageBitmap(roundImage);
         }
         mProductName.setText(mProduct.getName());
         mEdit = (Switch) view.findViewById(R.id.edit);
@@ -270,3 +274,4 @@ public class SavingInfoDialogFragment extends DialogFragment {
     }
 
 }
+

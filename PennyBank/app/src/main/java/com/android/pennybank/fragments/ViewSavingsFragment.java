@@ -14,7 +14,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.android.pennybank.activities.MainActivity;
 import com.android.pennybank.R;
@@ -66,12 +65,12 @@ public class ViewSavingsFragment extends Fragment {
     }
 
     private void setup(View view) {
-        mSavings = (ListView) view.findViewById(R.id.lv_savings);
+        mSavings = (ListView) view.findViewById(R.id.savings);
         mCustomAdapter = new CustomAdapter(getActivity().getApplicationContext());
         mReceiver = new Receiver(mCustomAdapter);
         mSavings.setAdapter(mCustomAdapter);
 
-        mBack = (Button) view.findViewById(R.id.btn_back);
+        mBack = (Button) view.findViewById(R.id.back);
 
         setListeners();
     }
@@ -83,7 +82,7 @@ public class ViewSavingsFragment extends Fragment {
                 FragmentManager fragmentManager = getFragmentManager();
                 SavingInfoDialogFragment savingInfoDialogFragment = new SavingInfoDialogFragment();
                 savingInfoDialogFragment.setProduct(ProductDatabaseWrapper.getProduct((int) mCustomAdapter.getItemId(position)));
-                savingInfoDialogFragment.show(fragmentManager, "Product Info");
+                savingInfoDialogFragment.show(fragmentManager, "Saving Info");
             }
         });
 
