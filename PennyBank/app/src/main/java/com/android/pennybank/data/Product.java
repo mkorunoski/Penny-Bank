@@ -69,9 +69,6 @@ public class Product {
         }
     }
 
-    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
-    public static final SimpleDateFormat HOUR_FORMAT = new SimpleDateFormat("hh:mm");
-
     private Context context;
 
     private int id;                             // The id will be used as the pending intent's request code
@@ -85,6 +82,7 @@ public class Product {
     private Calendar startDate;
     private Calendar endDate;
     private Calendar reminderTime;
+    private boolean active;
 
     /**
      * Constructor that initializes based upon data stored in database
@@ -102,10 +100,11 @@ public class Product {
      * @param startDate        Start date
      * @param endDate          End date
      * @param reminderTime     Reminder time
+     * @param active           If saving is active
      */
     public Product(Context context, int id, String name, String image, int price,
                    DEPOSIT_FREQUENCY depositFrequency, SAVING_METHOD savingMethod, int deposit,
-                   int savings, Calendar startDate, Calendar endDate, Calendar reminderTime) {
+                   int savings, Calendar startDate, Calendar endDate, Calendar reminderTime, boolean active) {
         this.context = context;
         this.id = id;
         this.name = name;
@@ -118,6 +117,7 @@ public class Product {
         this.startDate = startDate;
         this.endDate = endDate;
         this.reminderTime = reminderTime;
+        this.active = active;
     }
 
     /**
@@ -144,6 +144,7 @@ public class Product {
         this.savings = 0;
         this.startDate = Calendar.getInstance();
         this.reminderTime = (Calendar) reminderTime.clone();
+        this.active = true;
 
         calcEndDate();
     }
@@ -172,6 +173,7 @@ public class Product {
         this.startDate = Calendar.getInstance();
         this.endDate = endDate;
         this.reminderTime = (Calendar) reminderTime.clone();
+        this.active = true;
 
         calcDeposit();
     }
@@ -290,6 +292,21 @@ public class Product {
     public void setReminderTime(Calendar reminderTime) {
         this.reminderTime = reminderTime;
         Util.startAlarm(context, this);
+    }
+    //endregion
+
+    //region Getter and setter for active
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+        if (this.active) {
+            Util.startAlarm(context, this);
+        } else {
+            Util.cancelAlarm(context, this);
+        }
     }
     //endregion
 

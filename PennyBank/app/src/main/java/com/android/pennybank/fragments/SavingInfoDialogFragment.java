@@ -28,6 +28,7 @@ import com.android.pennybank.R;
 import com.android.pennybank.data.BitmapsLoader;
 import com.android.pennybank.data.Product;
 import com.android.pennybank.data.ProductDatabaseWrapper;
+import com.android.pennybank.util.Constants;
 
 import java.util.Calendar;
 
@@ -80,7 +81,7 @@ public class SavingInfoDialogFragment extends DialogFragment {
         adapter = ArrayAdapter.createFromResource(context, R.array.saving_method, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mSavingMethod.setAdapter(adapter);
-        Bitmap bitmap = BitmapsLoader.mBitmaps.get(mProduct.getId());
+        Bitmap bitmap = ProductDatabaseWrapper.mBitmaps.get(mProduct.getId());
         if (bitmap == null) {
             mProductImage.setImageResource(R.drawable.pennybank_icon);
         } else {
@@ -117,11 +118,11 @@ public class SavingInfoDialogFragment extends DialogFragment {
         mProductPrice.setText(String.valueOf(mProduct.getPrice()));
         mDepositFrequency.setSelection(mProduct.getDepositFrequency().getValue());
         mSavings.setText(String.valueOf(mProduct.getSavings()));
-        mStartDate.setText(Product.DATE_FORMAT.format(mProduct.getStartDate().getTime()));
+        mStartDate.setText(Constants.DATE_FORMAT.format(mProduct.getStartDate().getTime()));
         mSavingMethod.setSelection(mProduct.getSavingMethod().getValue());
-        mEndDate.setText(Product.DATE_FORMAT.format(mProduct.getEndDate().getTime()));
+        mEndDate.setText(Constants.DATE_FORMAT.format(mProduct.getEndDate().getTime()));
         mDeposit.setText(String.valueOf(mProduct.getDeposit()));
-        mReminderTime.setText(Product.HOUR_FORMAT.format(mProduct.getReminderTime().getTime()));
+        mReminderTime.setText(Constants.HOUR_FORMAT.format(mProduct.getReminderTime().getTime()));
     }
 
     private Calendar calendar = Calendar.getInstance();
@@ -136,8 +137,6 @@ public class SavingInfoDialogFragment extends DialogFragment {
                     mProduct.setPrice(newPrice);
                     ProductDatabaseWrapper.updateProduct(mProduct);
                     updateEditTexts();
-                    // Update list view on the change.
-                    getActivity().sendBroadcast(new Intent().setAction("com.android.pennybank.notifyDataSetChanged"));
                 }
             }
         });
@@ -166,8 +165,6 @@ public class SavingInfoDialogFragment extends DialogFragment {
                     mProduct.setSavings(newSavings);
                     ProductDatabaseWrapper.updateProduct(mProduct);
                     updateEditTexts();
-                    // Update list view on the change.
-                    getActivity().sendBroadcast(new Intent().setAction("com.android.pennybank.notifyDataSetChanged"));
                 }
             }
         });

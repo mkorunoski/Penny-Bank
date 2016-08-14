@@ -15,7 +15,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ListView;
+import android.widget.Switch;
 
 import com.android.pennybank.activities.MainActivity;
 import com.android.pennybank.R;
@@ -26,23 +28,7 @@ import com.android.pennybank.util.Util;
 
 public class ViewSavingsFragment extends Fragment {
 
-    public static class Receiver extends BroadcastReceiver {
-        public static CustomAdapter mCustomAdapterRef;
-
-        public Receiver() {
-        }
-
-        public Receiver(CustomAdapter customAdapter) {
-            mCustomAdapterRef = customAdapter;
-        }
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            mCustomAdapterRef.notifyDataSetChanged();
-        }
-    }
-
-    private Receiver mReceiver;
+    private NotifyDataSetChangedReceiver mReceiver;
     private FragmentListener mFragmentListener;
 
     private ListView mSavings;
@@ -73,7 +59,7 @@ public class ViewSavingsFragment extends Fragment {
     private void setup(View view) {
         mSavings = (ListView) view.findViewById(R.id.savings);
         mCustomAdapter = new CustomAdapter(getActivity().getApplicationContext());
-        mReceiver = new Receiver(mCustomAdapter);
+        mReceiver = new NotifyDataSetChangedReceiver(mCustomAdapter);
         mSavings.setAdapter(mCustomAdapter);
 
         mBack = (Button) view.findViewById(R.id.back);
@@ -117,8 +103,6 @@ public class ViewSavingsFragment extends Fragment {
                 alertDialog.dismiss();
                 ProductDatabaseWrapper.deleteProduct((int) mCustomAdapter.getItemId(productId));
                 getActivity().sendBroadcast(new Intent().setAction("com.android.pennybank.notifyDataSetChanged"));
-                BitmapsLoader.mBitmaps.remove(productId);
-                Util.cancelAlarm(getActivity(), productId);
             }
         });
         alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Get me back!", new DialogInterface.OnClickListener() {

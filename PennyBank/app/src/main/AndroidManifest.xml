@@ -21,7 +21,7 @@
         </activity>
         <activity android:name=".activities.GameActivity"></activity>
 
-        <receiver android:name=".fragments.ViewSavingsFragment$Receiver">
+        <receiver android:name=".fragments.NotifyDataSetChangedReceiver">
             <intent-filter>
                 <action android:name="com.android.pennybank.notifyDataSetChanged" />
             </intent-filter>

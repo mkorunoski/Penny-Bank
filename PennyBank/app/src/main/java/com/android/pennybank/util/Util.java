@@ -20,6 +20,7 @@ import android.util.Log;
 
 import com.android.pennybank.alarm.AlarmReceiver;
 import com.android.pennybank.data.Product;
+import com.android.pennybank.data.ProductDatabaseWrapper;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -108,19 +109,43 @@ public abstract class Util {
         intent.putExtra(Constants.KEY_PRODUCT_ID, product.getId());
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, product.getId(), intent, 0);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(context.ALARM_SERVICE);
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, product.getReminderTime().getTimeInMillis(), intervalMillis, pendingIntent);
+        Calendar reminderTime = product.getReminderTime();
+//      If the reminder time is smaller then the current time, the alarm manager will broadcast
+//      message to the receivers. This is why this condition is needed, so we can avoid notifying
+//      the user by adding the proper amount (based on deposit frequency) to the current reminder time.
+        if (reminderTime.getTimeInMillis() < System.currentTimeMillis()) {
+            switch (product.getDepositFrequency()) {
+                case DAILY: {
+                    reminderTime.add(Calendar.DAY_OF_MONTH, 1);
+                    break;
+                }
+                case WEEKLY: {
+                    reminderTime.add(Calendar.WEEK_OF_MONTH, 1);
+                    break;
+                }
+                case MONTHLY: {
+                    reminderTime.add(Calendar.MONTH, 1);
+                    break;
+                }
+            }
+            ProductDatabaseWrapper.updateProduct(product);
+        }
+        alarmManager.setRepeating(
+                AlarmManager.RTC_WAKEUP,
+                product.getReminderTime().getTimeInMillis(),
+                intervalMillis,
+                pendingIntent);
         if (Logger.ENABLED) {
             Log.i(Logger.TAG, "Reminder set to: " + product.getReminderTime().getTime());
         }
     }
 
-    public static void cancelAlarm(Context context, int productId) {
+    public static void cancelAlarm(Context context, Product product) {
         Intent intent = new Intent(context, AlarmReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, productId, intent, 0);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, product.getId(), intent, 0);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(context.ALARM_SERVICE);
         alarmManager.cancel(pendingIntent);
     }
-
 
     /*
     * Increments the number of product instances and returns it.
@@ -138,4 +163,19 @@ public abstract class Util {
         editor.commit();
         return productInstances;
     }
+
+    public static boolean intToBoolean(int i) {
+        if (i == 0) {
+            return false;
+        }
+        return true;
+    }
+
+    public static int booleanToInt(boolean b) {
+        if (b == false) {
+            return 0;
+        }
+        return 1;
+    }
+
 }

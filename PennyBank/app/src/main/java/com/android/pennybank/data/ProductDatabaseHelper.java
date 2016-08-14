@@ -6,12 +6,12 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.android.pennybank.fragments.ViewSavingsFragment;
+import com.android.pennybank.util.Constants;
+import com.android.pennybank.util.Util;
 
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.StringTokenizer;
 
 /**
  * A database of products.
@@ -36,6 +36,7 @@ public class ProductDatabaseHelper extends SQLiteOpenHelper {
     public static final String KEY_START_DATE = "startDate";
     public static final String KEY_END_DATE = "endDate";
     public static final String KEY_REMINDER_TIME = "reminderTime";
+    public static final String KEY_ACTIVE = "active";
 
     public ProductDatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -55,7 +56,8 @@ public class ProductDatabaseHelper extends SQLiteOpenHelper {
                 + KEY_SAVINGS + " REAL,"
                 + KEY_START_DATE + " DATE,"
                 + KEY_END_DATE + " DATE,"
-                + KEY_REMINDER_TIME + " DATE" + ")";
+                + KEY_REMINDER_TIME + " DATE,"
+                + KEY_ACTIVE + " INT" + ")";
 
         db.execSQL(CREATE_PRODUCTS_TABLE);
     }
@@ -70,17 +72,7 @@ public class ProductDatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(KEY_ID, product.getId());
-        values.put(KEY_PRODUCT_NAME, product.getName());
-        values.put(KEY_PRODUCT_IMAGE, product.getImage());
-        values.put(KEY_PRODUCT_PRICE, product.getPrice());
-        values.put(KEY_DEPOSIT_FREQUENCY, product.getDepositFrequency().getValue());
-        values.put(KEY_SAVING_METHOD, product.getSavingMethod().getValue());
-        values.put(KEY_DEPOSIT, product.getDeposit());
-        values.put(KEY_SAVINGS, product.getSavings());
-        values.put(KEY_START_DATE, Product.DATE_FORMAT.format(product.getStartDate().getTime()));
-        values.put(KEY_END_DATE, Product.DATE_FORMAT.format(product.getEndDate().getTime()));
-        values.put(KEY_REMINDER_TIME, Product.HOUR_FORMAT.format(product.getReminderTime().getTime()));
+        putValues(product, values);
 
         db.insert(TABLE_PRODUCTS, null, values);
         db.close();
@@ -92,7 +84,7 @@ public class ProductDatabaseHelper extends SQLiteOpenHelper {
         Cursor cursor = db.query(TABLE_PRODUCTS,
                 new String[]{KEY_ID, KEY_PRODUCT_NAME, KEY_PRODUCT_IMAGE, KEY_PRODUCT_PRICE,
                         KEY_DEPOSIT_FREQUENCY, KEY_SAVING_METHOD, KEY_DEPOSIT, KEY_SAVINGS,
-                        KEY_START_DATE, KEY_END_DATE, KEY_REMINDER_TIME},
+                        KEY_START_DATE, KEY_END_DATE, KEY_REMINDER_TIME, KEY_ACTIVE},
                 KEY_ID + "=?",
                 new String[]{String.valueOf(id)}, null, null, null, null);
 
@@ -124,14 +116,34 @@ public class ProductDatabaseHelper extends SQLiteOpenHelper {
         return products;
     }
 
+    public void deleteProduct(int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_PRODUCTS, KEY_ID + " = ?", new String[]{String.valueOf(id)});
+        db.close();
+    }
+
+    public int updateProduct(Product product) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        putValues(product, values);
+
+        int status = db.update(TABLE_PRODUCTS, values, KEY_ID + " = ?",
+                new String[]{String.valueOf(product.getId())});
+
+        db.close();
+
+        return status;
+    }
+
     private Product initProduct(Cursor cursor) {
         Calendar startDate = Calendar.getInstance();
         Calendar endDate = Calendar.getInstance();
         Calendar reminderTime = Calendar.getInstance();
         try {
-            startDate.setTime(Product.DATE_FORMAT.parse(cursor.getString(8)));
-            endDate.setTime(Product.DATE_FORMAT.parse(cursor.getString(9)));
-            reminderTime.setTime(Product.HOUR_FORMAT.parse(cursor.getString(10)));
+            startDate.setTime(Constants.DATE_FORMAT.parse(cursor.getString(8)));
+            endDate.setTime(Constants.DATE_FORMAT.parse(cursor.getString(9)));
+            reminderTime.setTime(Constants.HOUR_DATE_FORMAT.parse(cursor.getString(10)));
         } catch (ParseException pe) {
             pe.printStackTrace();
         }
@@ -148,22 +160,14 @@ public class ProductDatabaseHelper extends SQLiteOpenHelper {
                 Integer.parseInt(cursor.getString(7)),                                      // savings
                 startDate,                                                                  // startDate
                 endDate,                                                                    // endDate
-                reminderTime                                                                // reminderTime
+                reminderTime,                                                               // reminderTime
+                Util.intToBoolean(Integer.parseInt(cursor.getString(11)))                   // active
         );
 
         return product;
     }
 
-    public void deleteProduct(int id) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_PRODUCTS, KEY_ID + " = ?", new String[]{String.valueOf(id)});
-        db.close();
-    }
-
-    public int updateProduct(Product product) {
-        SQLiteDatabase db = this.getWritableDatabase();
-
-        ContentValues values = new ContentValues();
+    private void putValues(Product product, ContentValues values) {
         values.put(KEY_ID, product.getId());
         values.put(KEY_PRODUCT_NAME, product.getName());
         values.put(KEY_PRODUCT_IMAGE, product.getImage());
@@ -172,16 +176,11 @@ public class ProductDatabaseHelper extends SQLiteOpenHelper {
         values.put(KEY_SAVING_METHOD, product.getSavingMethod().getValue());
         values.put(KEY_DEPOSIT, product.getDeposit());
         values.put(KEY_SAVINGS, product.getSavings());
-        values.put(KEY_START_DATE, Product.DATE_FORMAT.format(product.getStartDate().getTime()));
-        values.put(KEY_END_DATE, Product.DATE_FORMAT.format(product.getEndDate().getTime()));
-        values.put(KEY_REMINDER_TIME, Product.HOUR_FORMAT.format(product.getReminderTime().getTime()));
-
-        int status =  db.update(TABLE_PRODUCTS, values, KEY_ID + " = ?",
-                new String[]{String.valueOf(product.getId())});
-
-        db.close();
-
-        return status;
+        values.put(KEY_START_DATE, Constants.DATE_FORMAT.format(product.getStartDate().getTime()));
+        values.put(KEY_END_DATE, Constants.DATE_FORMAT.format(product.getEndDate().getTime()));
+        values.put(KEY_REMINDER_TIME, Constants.HOUR_DATE_FORMAT.format(product.getReminderTime().getTime()));
+        values.put(KEY_ACTIVE, Util.booleanToInt(product.isActive()));
     }
+
 
 }

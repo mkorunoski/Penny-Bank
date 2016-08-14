@@ -31,8 +31,8 @@ import com.android.pennybank.data.Product;
 import com.android.pennybank.data.Product.DEPOSIT_FREQUENCY;
 import com.android.pennybank.data.Product.SAVING_METHOD;
 import com.android.pennybank.data.ProductDatabaseWrapper;
+import com.android.pennybank.util.Constants;
 import com.android.pennybank.util.Logger;
-import com.android.pennybank.data.BitmapsLoader;
 import com.android.pennybank.util.Util;
 
 import java.text.ParseException;
@@ -132,7 +132,7 @@ public class NewSavingFormFragment extends Fragment {
                 calendar.set(Calendar.YEAR, year);
                 calendar.set(Calendar.MONTH, monthOfYear);
                 calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                mEndDate.setText(Product.DATE_FORMAT.format(calendar.getTime()));
+                mEndDate.setText(Constants.DATE_FORMAT.format(calendar.getTime()));
             }
         };
 
@@ -161,7 +161,7 @@ public class NewSavingFormFragment extends Fragment {
                 Calendar endDate = Calendar.getInstance();
                 if (savingMethod == SAVING_METHOD.BY_END_DATE && !mEndDate.getText().toString().equals("")) {
                     try {
-                        endDate.setTime(Product.DATE_FORMAT.parse(mEndDate.getText().toString()));
+                        endDate.setTime(Constants.DATE_FORMAT.parse(mEndDate.getText().toString()));
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
@@ -218,7 +218,6 @@ public class NewSavingFormFragment extends Fragment {
                 mProduct.setReminderTime(calendar);
 
                 ProductDatabaseWrapper.addProduct(mProduct);
-                new BitmapsLoader(getActivity(), mProduct).execute();
 
                 notifySuccess();
             }

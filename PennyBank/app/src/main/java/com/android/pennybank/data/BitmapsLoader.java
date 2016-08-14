@@ -9,11 +9,8 @@ import com.android.pennybank.util.Util;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class BitmapsLoader extends AsyncTask<Void, Void, Void> {
-//    This is static hash map for caching purpose.
-    public static HashMap<Integer, Bitmap> mBitmaps = new HashMap<>();
 
     private Context mContext;
     private Product mProduct;
@@ -54,7 +51,7 @@ public class BitmapsLoader extends AsyncTask<Void, Void, Void> {
         }
         if (bitmap != null) {
 //            Vcituvanjeto na bitmapa e dolg proces, zatoa ke gi kesirame.
-            mBitmaps.put(id, bitmap);
+            ProductDatabaseWrapper.mBitmaps.put(id, bitmap);
         }
     }
 

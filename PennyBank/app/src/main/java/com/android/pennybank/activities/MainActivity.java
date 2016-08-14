@@ -9,7 +9,6 @@ import com.android.pennybank.fragments.FragmentListener;
 import com.android.pennybank.fragments.NewSavingFormFragment;
 import com.android.pennybank.fragments.StartScreenFragment;
 import com.android.pennybank.fragments.ViewSavingsFragment;
-import com.android.pennybank.data.BitmapsLoader;
 
 public class MainActivity extends AppCompatActivity implements FragmentListener {
 
@@ -29,7 +28,6 @@ public class MainActivity extends AppCompatActivity implements FragmentListener 
         setContentView(R.layout.activity_main);
 
         ProductDatabaseWrapper.initDatabase(this);
-        new BitmapsLoader(this, null).execute();
 
         switchFragments(FRAGMENTS.START_SCREEN_FRAGMENT);
         mLastFragment = FRAGMENTS.NULL;
