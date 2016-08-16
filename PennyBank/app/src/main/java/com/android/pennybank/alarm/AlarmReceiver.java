@@ -24,7 +24,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
                 .setSmallIcon(R.drawable.pennybank_icon)
                 .setContentTitle(product.getName())
-                .setContentText("Deposit " + product.getDeposit() + " ¤ in your penny bank!")
+                .setContentText("Deposit " + product.getDeposit() + " " + Constants.CURRENCY_SIGN + " in your penny bank!")
                 .addAction(R.drawable.pennybank_icon, "Deposit", pendingIntent)
                 .setAutoCancel(false)
                 .setOngoing(true);

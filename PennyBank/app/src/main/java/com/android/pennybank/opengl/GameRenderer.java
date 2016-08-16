@@ -12,7 +12,6 @@ import static android.opengl.GLES20.glClearColor;
 import static android.opengl.GLES20.glDrawArrays;
 import static android.opengl.GLES20.glEnable;
 import static android.opengl.GLES20.glEnableVertexAttribArray;
-import static android.opengl.GLES20.glGenBuffers;
 import static android.opengl.GLES20.glGetAttribLocation;
 import static android.opengl.GLES20.glGetUniformLocation;
 import static android.opengl.GLES20.glUniform4f;
@@ -20,10 +19,8 @@ import static android.opengl.GLES20.glUniformMatrix4fv;
 import static android.opengl.GLES20.glUseProgram;
 import static android.opengl.GLES20.glVertexAttribPointer;
 import static android.opengl.GLES20.glViewport;
-import static android.opengl.GLES30.glGenVertexArrays;
 import static android.opengl.Matrix.frustumM;
 import static android.opengl.Matrix.rotateM;
-import static android.opengl.Matrix.scaleM;
 import static android.opengl.Matrix.setIdentityM;
 import static android.opengl.Matrix.setLookAtM;
 import static android.opengl.Matrix.translateM;
@@ -31,20 +28,26 @@ import static android.opengl.Matrix.translateM;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import android.content.Context;
+import android.graphics.PointF;
 import android.opengl.GLSurfaceView.Renderer;
+import android.util.Log;
+import android.widget.Toast;
 
 import com.android.pennybank.R;
+import com.android.pennybank.activities.GameActivity;
+import com.android.pennybank.util.Logger;
 
 public class GameRenderer implements Renderer {
     private final Context context;
+
+    private int width = 600;
+    private int height = 951;
 
     private static final int BYTES_PER_FLOAT = 4;
     private static final int POSITION_COMPONENT_COUNT = 2;
@@ -72,15 +75,15 @@ public class GameRenderer implements Renderer {
 
     private static final float D = 0.25f;
     float[] vertices =
-    {
+            {
 //           x   y  s  t
-            -D, -D, 0, 0,
-            +D, -D, 1, 0,
-            +D, +D, 1, 1,
-            -D, -D, 0, 0,
-            +D, +D, 1, 1,
-            -D, +D, 0, 1
-    };
+                    -D, -D, 0, 0,
+                    +D, -D, 1, 0,
+                    +D, +D, 1, 1,
+                    -D, -D, 0, 0,
+                    +D, +D, 1, 1,
+                    -D, +D, 0, 1
+            };
 
     private int pennybankTexture;
 
@@ -88,10 +91,10 @@ public class GameRenderer implements Renderer {
     private final float[] modelMatrix = new float[16];
     private final float[] viewMatrix = new float[16];
 
-    public GameRenderer() {
-        context = null;
-        vertexData = null;
-    }
+//    public GameRenderer() {
+//        context = null;
+//        vertexData = null;
+//    }
 
     public GameRenderer(Context context) {
         this.context = context;
@@ -135,11 +138,18 @@ public class GameRenderer implements Renderer {
 
         pennybankTexture = TextureHelper.loadTexture(context, R.drawable.pennybank_icon);
 
-        setLookAtM(viewMatrix, 0, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+        setLookAtM(viewMatrix, 0,
+                0.0f, 0.0f, -1.0f,
+                0.0f, 0.0f, 0.0f,
+                0.0f, 1.0f, 0.0f);
     }
 
     @Override
     public void onSurfaceChanged(GL10 glUnused, int width, int height) {
+        // This is not working.
+        this.width = width;
+        this.height = height;
+
         glViewport(0, 0, width, height);
         final float aspectRatio = width > height ? (float) width / (float) height : (float) height / (float) width;
         if (width > height) {
@@ -149,9 +159,39 @@ public class GameRenderer implements Renderer {
         }
     }
 
+    private volatile PointF tapedPosition;
+    private int scoredPoints = 0;
+
+    public void setTapedPosition(PointF tapedPosition) {
+        this.tapedPosition = tapedPosition;
+        map();
+    }
+
+    private void map() {
+        float oldX = tapedPosition.x;
+        float oldY = tapedPosition.y;
+        float aspectRatio = width > height ? (float) width / (float) height : (float) height / (float) width;
+
+//        [A, B] --> [a, b]
+//        (val - A)*(b-a)/(B-A) + a
+
+//        [0, width] -> [-1, 1]
+        float newX = oldX * 2.0f / (float) width - 1.0f;
+//        [0, height] -> [-aspectRatio, aspectRatio]
+        float newY = oldY * 2.0f * aspectRatio / (float) height - aspectRatio;
+
+        if ((newX >= (this.x - 2 * D) && newX <= (this.x + 2 * D)) &&
+                (newY >= (this.y - 2 * D) && newY <= (this.y + 2 * D))) {
+            scoredPoints++;
+            ((GameActivity) context).setScore(scoredPoints);
+        }
+    }
+
     private final Random random = new Random();
     private float x = 0.0f;
     private float y = 0.0f;
+
+    private int sleepTimeMS = 500;
 
     @Override
     public void onDrawFrame(GL10 glUnused) {
@@ -171,7 +211,10 @@ public class GameRenderer implements Renderer {
         glDrawArrays(GL_TRIANGLES, 0, vertices.length / COMPONENT_COUNT);
 
         try {
-            Thread.sleep(500);
+            Thread.sleep(sleepTimeMS);
+            if (sleepTimeMS > 100) {
+                sleepTimeMS--;
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

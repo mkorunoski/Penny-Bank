@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.android.pennybank.R;
 import com.android.pennybank.data.Product;
 import com.android.pennybank.data.ProductDatabaseWrapper;
+import com.android.pennybank.util.Constants;
 
 import java.util.ArrayList;
 
@@ -66,7 +67,7 @@ public class CustomAdapter extends BaseAdapter {
             productImage.setImageBitmap(bitmap);
         }
         productName.setText(product.getName());
-        savingStatus.setText(product.getBalance() + " ¤ left.");
+        savingStatus.setText(product.getBalance() + " " + Constants.CURRENCY_SIGN + " left.");
         pauseSaving.setChecked(product.isActive());
         pauseSaving.setText(product.isActive() ? "Active" : "Inactive");
 

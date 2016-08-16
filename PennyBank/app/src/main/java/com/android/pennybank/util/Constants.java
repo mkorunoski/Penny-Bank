@@ -7,4 +7,5 @@ public abstract class Constants {
     public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
     public static final SimpleDateFormat HOUR_DATE_FORMAT = new SimpleDateFormat("hh:mm dd/MM/yyyy");
     public static final SimpleDateFormat HOUR_FORMAT = new SimpleDateFormat("hh:mm");
+    public static final String CURRENCY_SIGN = "¤";
 }

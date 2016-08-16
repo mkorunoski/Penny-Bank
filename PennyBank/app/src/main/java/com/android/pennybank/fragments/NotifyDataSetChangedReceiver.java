@@ -16,6 +16,8 @@ public class NotifyDataSetChangedReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        mCustomAdapterRef.notifyDataSetChanged();
+        if (mCustomAdapterRef != null) {
+            mCustomAdapterRef.notifyDataSetChanged();
+        }
     }
 }

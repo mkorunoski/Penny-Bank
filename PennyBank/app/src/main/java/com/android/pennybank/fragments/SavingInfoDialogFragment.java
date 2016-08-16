@@ -3,7 +3,6 @@ package com.android.pennybank.fragments;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -25,7 +24,6 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.android.pennybank.R;
-import com.android.pennybank.data.BitmapsLoader;
 import com.android.pennybank.data.Product;
 import com.android.pennybank.data.ProductDatabaseWrapper;
 import com.android.pennybank.util.Constants;

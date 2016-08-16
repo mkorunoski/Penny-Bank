@@ -37,11 +37,11 @@ public abstract class ProductDatabaseWrapper {
         return mProductDatabase.getAllProducts();
     }
 
-    public static void deleteProduct(int id) {
-        Product removedProduct = getProduct(id);
-        mProductDatabase.deleteProduct(id);
-        mBitmaps.remove(id);
-        Util.cancelAlarm(mContext, removedProduct);
+    public static void deleteProduct(Product product) {
+        mProductDatabase.deleteProduct(product.getId());
+        mBitmaps.remove(product.getId());
+        Util.cancelAlarm(mContext, product);
+        mContext.sendBroadcast(new Intent().setAction("com.android.pennybank.notifyDataSetChanged"));
     }
 
     public static void updateProduct(Product product) {
