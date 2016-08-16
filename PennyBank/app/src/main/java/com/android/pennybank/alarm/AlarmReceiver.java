@@ -25,7 +25,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                 .setSmallIcon(R.drawable.pennybank_icon)
                 .setContentTitle(product.getName())
                 .setContentText("Deposit " + product.getDeposit() + " " + Constants.CURRENCY_SIGN + " in your penny bank!")
-                .addAction(R.drawable.pennybank_icon, "Deposit", pendingIntent)
+                .addAction(R.drawable.deposit, "Deposit", pendingIntent)
                 .setAutoCancel(false)
                 .setOngoing(true);
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);

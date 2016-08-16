@@ -20,8 +20,10 @@
         android:layout_above="@+id/space"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center_horizontal"
-        android:width="100dp"
-        android:text="New saving" />
+        android:width="128dp"
+        android:height="128dp"
+        android:background="@drawable/new_saving_button"
+        android:clickable="true" />
 
     <Button
         android:id="@+id/view_savings"
@@ -29,13 +31,15 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/space"
         android:layout_centerHorizontal="true"
-        android:width="100dp"
-        android:text="View savings" />
+        android:width="128dp"
+        android:height="128dp"
+        android:background="@drawable/view_savings_button"
+        android:clickable="true" />
 
     <Space
         android:id="@+id/space"
-        android:layout_width="20px"
-        android:layout_height="20px"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true" />
 
@@ -46,7 +50,21 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:text="Bored?" />
+        android:width="128dp"
+        android:height="128dp"
+        android:background="@drawable/play_button"
+        android:clickable="true" />
 
+    <Button
+        android:id="@+id/map"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:width="128dp"
+        android:height="128dp"
+        android:background="@drawable/map_button"
+        android:clickable="true" />
 
 </RelativeLayout>

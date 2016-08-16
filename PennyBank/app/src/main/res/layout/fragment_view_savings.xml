@@ -22,5 +22,8 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:text="Back" />
+        android:width="128dp"
+        android:height="128dp"
+        android:background="@drawable/back_button"
+        android:clickable="true" />
 </RelativeLayout>

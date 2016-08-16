@@ -2,7 +2,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.android.pennybank">
 
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -22,17 +30,17 @@
         <activity
             android:name=".activities.GameActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.GoogleMapActivity"
+            android:screenOrientation="portrait" />
 
         <receiver android:name=".fragments.NotifyDataSetChangedReceiver">
             <intent-filter>
                 <action android:name="com.android.pennybank.notifyDataSetChanged" />
             </intent-filter>
         </receiver>
-
         <receiver android:name=".alarm.AlarmReceiver" />
-
         <receiver android:name=".alarm.NotificationButtonClickReceiver" />
-
         <receiver
             android:name=".alarm.DeviceBootReceiver"
             android:enabled="false">
@@ -40,6 +48,10 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+
+        <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="AIzaSyBGJu6QvwyIQL35YOGEaJlagOTvP_1sUwA" />
     </application>
 
 </manifest>

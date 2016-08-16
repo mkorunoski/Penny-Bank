@@ -59,7 +59,7 @@ public class SavingInfoDialogFragment extends DialogFragment {
 
         Context context = getActivity().getApplicationContext();
 
-        View view = inflater.inflate(R.layout.saving_info_dialog_fragment_layout, null);
+        View view = inflater.inflate(R.layout.dialog_fragment_saving_info, null);
 
         mProductImage = (ImageView) view.findViewById(R.id.product_image);
         mProductName = (TextView) view.findViewById(R.id.product_name_label);

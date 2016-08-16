@@ -45,7 +45,7 @@ public class ViewSavingsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.view_savings_fragment_layout, container, false);
+        View view = inflater.inflate(R.layout.fragment_view_savings, container, false);
         setup(view);
         return view;
     }

@@ -72,7 +72,7 @@ public class NewSavingFormFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.new_saving_form_fragment_layout, container, false);
+        View view = inflater.inflate(R.layout.fragment_new_saving_form, container, false);
         setup(view);
         return view;
     }
