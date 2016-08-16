@@ -33,7 +33,7 @@ public class GoogleMapActivity
         AppCompatActivity
         implements OnMapReadyCallback, LocationListener {
 
-    private GoogleMap mMap = null;
+    private GoogleMap mGoogleMap = null;
     private Criteria mCriteria;
     private String mProvider;
     private LocationManager mLocationManager;
@@ -94,7 +94,7 @@ public class GoogleMapActivity
 
     @Override
     public void onMapReady(GoogleMap map) {
-        mMap = map;
+        mGoogleMap = map;
     }
 
     @Override
@@ -107,7 +107,7 @@ public class GoogleMapActivity
         if (mLocation != null) {
             currentPosition = new LatLng(mLocation.getLatitude(), mLocation.getLongitude());
         }
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentPosition, 16));
+        mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentPosition, 16));
 
         StringBuilder googlePlacesUrl = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
         googlePlacesUrl.append("location=" + currentPosition.latitude + "," + currentPosition.longitude);
@@ -119,7 +119,7 @@ public class GoogleMapActivity
         googlePlacesUrl.append("&key=" + GOOGLE_BROWSER_KEY);
 
         Object[] toPass = new Object[2];
-        toPass[0] = mMap;
+        toPass[0] = mGoogleMap;
         toPass[1] = googlePlacesUrl.toString();
         (new GooglePlacesReadTask()).execute(toPass);
     }

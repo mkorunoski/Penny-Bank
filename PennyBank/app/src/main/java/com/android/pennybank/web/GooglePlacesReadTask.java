@@ -13,7 +13,7 @@ import java.util.List;
 
 public class GooglePlacesReadTask extends AsyncTask<Object, Integer, List<HashMap<String, String>>> {
 
-    GoogleMap googleMap;
+    GoogleMap mGoogleMap;
 
     @Override
     protected List<HashMap<String, String>> doInBackground(Object... inputObj) {
@@ -22,7 +22,7 @@ public class GooglePlacesReadTask extends AsyncTask<Object, Integer, List<HashMa
         List<HashMap<String, String>> googlePlacesList = null;
         Places placeJsonParser = new Places();
         try {
-            googleMap = (GoogleMap) inputObj[0];
+            mGoogleMap = (GoogleMap) inputObj[0];
             String googlePlacesUrl = (String) inputObj[1];
             Http http = new Http();
             googlePlacesData = http.read(googlePlacesUrl);
@@ -44,7 +44,7 @@ public class GooglePlacesReadTask extends AsyncTask<Object, Integer, List<HashMa
             double lng = Double.parseDouble(googlePlace.get("lng"));
             String placeName = googlePlace.get("place_name");
 
-            googleMap.addMarker(new MarkerOptions().position(new LatLng(lat, lng)).title(placeName));
+            mGoogleMap.addMarker(new MarkerOptions().position(new LatLng(lat, lng)).title(placeName));
         }
     }
 
