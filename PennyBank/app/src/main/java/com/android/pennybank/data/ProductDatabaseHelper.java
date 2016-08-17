@@ -92,9 +92,14 @@ public class ProductDatabaseHelper extends SQLiteOpenHelper {
             cursor.moveToFirst();
         }
 
-        db.close();
+        Product product = initProduct(cursor);
 
-        return initProduct(cursor);
+        db.close();
+        if (cursor != null) {
+            cursor.close();
+        }
+
+        return product;
     }
 
     public ArrayList<Product> getAllProducts() {
@@ -112,6 +117,7 @@ public class ProductDatabaseHelper extends SQLiteOpenHelper {
         }
 
         db.close();
+        cursor.close();
 
         return products;
     }
