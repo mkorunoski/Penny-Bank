@@ -1,13 +1,12 @@
 package com.android.pennybank.alarm;
 
-import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.widget.Toast;
 
+import com.android.pennybank.activities.MainActivity;
 import com.android.pennybank.data.Product;
 import com.android.pennybank.data.ProductDatabaseWrapper;
 import com.android.pennybank.util.Constants;
@@ -26,9 +25,11 @@ public class NotificationButtonClickReceiver extends BroadcastReceiver {
         notificationManager.cancel(product.getId());
 
         if (product.getBalance() <= 0) {
-            // TODO: You have enough savings to purchase the product. Notify the user.
-            Toast.makeText(context, "You can now purchase " + product.getName() + ".", Toast.LENGTH_SHORT).show();
-            ProductDatabaseWrapper.deleteProduct(product);
+            Intent i = new Intent(context, MainActivity.class);
+            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            i.putExtra(Constants.SUCCESS, Constants.TRUE);
+            i.putExtra(Constants.KEY_PRODUCT_ID, product.getId());
+            context.startActivity(i);
         }
     }
 }

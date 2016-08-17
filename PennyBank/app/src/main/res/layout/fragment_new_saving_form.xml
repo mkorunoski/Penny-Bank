@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/blue"
     android:gravity="center">
+
 
     <TextView
         android:id="@+id/product_name_label"
@@ -124,8 +126,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/deposit"
         android:layout_centerHorizontal="true"
-        android:width="128dp"
-        android:height="128dp"
+        android:width="64dp"
+        android:height="64dp"
         android:background="@drawable/save_button"
         android:clickable="true" />
 
@@ -133,9 +135,23 @@
         android:id="@+id/choose_picture"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/product_price_label"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:text="Choose picture" />
+        android:width="64dp"
+        android:height="64dp"
+        android:background="@drawable/gallery_button"
+        android:clickable="true" />
 
+    <Button
+        android:id="@+id/back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/save"
+        android:width="64dp"
+        android:height="64dp"
+        android:background="@drawable/back_button"
+        android:clickable="true" />
 </RelativeLayout>
+
+

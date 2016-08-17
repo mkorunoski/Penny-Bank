@@ -55,6 +55,7 @@ public class NewSavingFormFragment extends Fragment {
     private EditText mDeposit;
     private TextView mDepositLabel;
     private Button mSave;
+    private Button mBack;
 
     @Override
     public void onAttach(Context context) {
@@ -98,6 +99,7 @@ public class NewSavingFormFragment extends Fragment {
         mDeposit = (EditText) view.findViewById(R.id.deposit);
         mDepositLabel = (TextView) view.findViewById(R.id.deposit_label);
         mSave = (Button) view.findViewById(R.id.save);
+        mBack = (Button) view.findViewById(R.id.back);
 
         mEndDate.setEnabled(false);
         changeVisibility(Product.SAVING_METHOD.BY_DEPOSIT);
@@ -205,6 +207,13 @@ public class NewSavingFormFragment extends Fragment {
                 setReminderAndAddToDatabase();
             }
         });
+
+        mBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mFragmentListener.switchFragments(MainActivity.FRAGMENTS.START_SCREEN_FRAGMENT);
+            }
+        });
     }
 
     private Calendar calendar = Calendar.getInstance();
@@ -239,6 +248,7 @@ public class NewSavingFormFragment extends Fragment {
                 Uri selectedImageUri = data.getData();
                 if (null != selectedImageUri) {
                     mProductImage = "file://" + Util.getPathFromURI(getActivity().getApplicationContext(), selectedImageUri);
+                    mChoosePicture.setBackgroundResource(R.drawable.picture_choosen_button);
                     if (Logger.ENABLED) {
                         Log.i(Logger.TAG, "Image Path : " + mProductImage);
                     }

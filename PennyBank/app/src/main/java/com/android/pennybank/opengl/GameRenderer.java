@@ -1,11 +1,15 @@
 package com.android.pennybank.opengl;
 
+import static android.opengl.GLES10.glBlendFunc;
 import static android.opengl.GLES20.GL_COLOR_BUFFER_BIT;
 import static android.opengl.GLES20.GL_DEPTH_BUFFER_BIT;
 import static android.opengl.GLES20.GL_DEPTH_TEST;
 import static android.opengl.GLES20.GL_FLOAT;
 import static android.opengl.GLES20.GL_TEXTURE_2D;
 import static android.opengl.GLES20.GL_TRIANGLES;
+import static android.opengl.GLES20.GL_ONE_MINUS_SRC_ALPHA;
+import static android.opengl.GLES20.GL_ONE;
+import static android.opengl.GLES20.GL_BLEND;
 import static android.opengl.GLES20.glBindTexture;
 import static android.opengl.GLES20.glClear;
 import static android.opengl.GLES20.glClearColor;
@@ -37,7 +41,6 @@ import android.content.Context;
 import android.graphics.PointF;
 import android.opengl.GLSurfaceView.Renderer;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.android.pennybank.R;
 import com.android.pennybank.activities.GameActivity;
@@ -109,7 +112,10 @@ public class GameRenderer implements Renderer {
 
     @Override
     public void onSurfaceCreated(GL10 glUnused, EGLConfig config) {
-        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        float r = map(3, 0, 255, 0, 1);
+        float g = map(169, 0, 255, 0, 1);
+        float b = map(244, 0, 255, 0, 1);
+        glClearColor(r, g, b, 0.0f);
         glEnable(GL_DEPTH_TEST);
 
         String vertexShaderSource = TextResourceReader.readTextFileFromResource(context, R.raw.simple_vertex_shader);
@@ -153,38 +159,24 @@ public class GameRenderer implements Renderer {
         glViewport(0, 0, width, height);
         final float aspectRatio = width > height ? (float) width / (float) height : (float) height / (float) width;
         if (width > height) {
-            frustumM(projectionMatrix, 0, -aspectRatio, aspectRatio, -1.0f, 1.0f, 1.0f, 100.0f);
+            frustumM(projectionMatrix, 0, -aspectRatio, aspectRatio, -1.0f, 1.0f, 1.0f, 1000.0f);
         } else {
-            frustumM(projectionMatrix, 0, -1.0f, 1.0f, -aspectRatio, aspectRatio, 1.0f, 100.0f);
+            frustumM(projectionMatrix, 0, -1.0f, 1.0f, -aspectRatio, aspectRatio, 1.0f, 1000.0f);
         }
     }
 
-    private volatile PointF tapedPosition;
-    private int scoredPoints = 0;
+    private PointF tapedPosition;
 
     public void setTapedPosition(PointF tapedPosition) {
         this.tapedPosition = tapedPosition;
-        map();
+        checkForHit(this.tapedPosition);
     }
 
-    private void map() {
-        float oldX = tapedPosition.x;
-        float oldY = tapedPosition.y;
-        float aspectRatio = width > height ? (float) width / (float) height : (float) height / (float) width;
-
+    private float map(float val, float A, float B, float a, float b) {
 //        [A, B] --> [a, b]
 //        (val - A)*(b-a)/(B-A) + a
+        return (val - A) * (b - a) / (B - A) + a;
 
-//        [0, width] -> [-1, 1]
-        float newX = oldX * 2.0f / (float) width - 1.0f;
-//        [0, height] -> [-aspectRatio, aspectRatio]
-        float newY = oldY * 2.0f * aspectRatio / (float) height - aspectRatio;
-
-        if ((newX >= (this.x - 2 * D) && newX <= (this.x + 2 * D)) &&
-                (newY >= (this.y - 2 * D) && newY <= (this.y + 2 * D))) {
-            scoredPoints++;
-            ((GameActivity) context).setScore(scoredPoints);
-        }
     }
 
     private final Random random = new Random();
@@ -192,6 +184,8 @@ public class GameRenderer implements Renderer {
     private float y = 0.0f;
 
     private int sleepTimeMS = 500;
+
+    private float counter = 0.0f;
 
     @Override
     public void onDrawFrame(GL10 glUnused) {
@@ -202,6 +196,9 @@ public class GameRenderer implements Renderer {
         y = random.nextFloat() * 2.0f - 1.0f;
         translateM(modelMatrix, 0, x, y, 0.0f);
         rotateM(modelMatrix, 0, random.nextFloat() * 360.0f, 0.0f, 0.0f, 1.0f);
+
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
         glBindTexture(GL_TEXTURE_2D, pennybankTexture);
         glUniform4f(uColorLocation, 1.0f, 1.0f, 1.0f, 1.0f);
@@ -217,6 +214,21 @@ public class GameRenderer implements Renderer {
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
+        }
+    }
+
+    private int scoredPoints = 0;
+
+    private void checkForHit(PointF tapedPosition) {
+        if (tapedPosition == null)
+            return;
+        float aspectRatio = width > height ? (float) width / (float) height : (float) height / (float) width;
+        tapedPosition.x = map(tapedPosition.x, 0, width, -1, 1);
+        tapedPosition.y = map(tapedPosition.y, 0, height, -aspectRatio, aspectRatio);
+        if ((tapedPosition.x >= (this.x - 2 * D) && tapedPosition.x <= (this.x + 2 * D)) &&
+                (tapedPosition.y >= (this.y - 2 * D) && tapedPosition.y <= (this.y + 2 * D))) {
+            scoredPoints++;
+            ((GameActivity) context).setScore(scoredPoints);
         }
     }
 }

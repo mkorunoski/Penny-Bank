@@ -6,7 +6,6 @@ import android.util.*;
 import com.android.pennybank.util.Logger;
 import com.android.pennybank.util.Util;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 /**

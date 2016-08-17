@@ -16,8 +16,9 @@ import com.android.pennybank.R;
 import android.location.LocationListener;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.EditText;
 
 import com.android.pennybank.util.Logger;
 import com.android.pennybank.web.GooglePlacesReadTask;
@@ -26,7 +27,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
-
 
 public class GoogleMapActivity
         extends
@@ -41,11 +41,10 @@ public class GoogleMapActivity
 
     private long MINUTE = 60 * 1000;
     private int PROXIMITY_RADIUS = 8000;
-    private String TYPES = "";
+    private String TYPE = "";
     private static final String GOOGLE_BROWSER_KEY = "AIzaSyAC3UCVuVNPxgCBRAqL3WGsqbLoBcmyRSI";
-    private static final String GOOGLE_API_KEY = "AIzaSyBGJu6QvwyIQL35YOGEaJlagOTvP_1sUwA";
 
-    private EditText mType;
+    private AutoCompleteTextView mType;
     private Button mSearch;
 
     @Override
@@ -66,12 +65,62 @@ public class GoogleMapActivity
         mLocationManager = (LocationManager) this.getSystemService(this.LOCATION_SERVICE);
     }
 
+    private static final String[] TYPES = new String[]{
+            "airport",
+            "amusement_park",
+            "aquarium",
+            "art_gallery",
+            "beauty_salon",
+            "bicycle_store",
+            "book_store",
+            "car_dealer",
+            "car_rental",
+            "car_repair",
+            "clothing_store",
+            "dentist",
+            "department_store",
+            "doctor",
+            "electrician",
+            "electronics_store",
+            "florist",
+            "furniture_store",
+            "hair_care",
+            "hardware_store",
+            "hindu_temple",
+            "home_goods_store",
+            "hospital",
+            "insurance_agency",
+            "jewelry_store",
+            "laundry",
+            "lodging",
+            "movie_theater",
+            "museum",
+            "night_club",
+            "pet_store",
+            "physiotherapist",
+            "real_estate_agency",
+            "school",
+            "shoe_store",
+            "shopping_mall",
+            "spa",
+            "stadium",
+            "store",
+            "train_station",
+            "transit_station",
+            "travel_agency",
+            "university",
+            "veterinary_care"
+    };
+
     private void setup() {
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, TYPES);
+        mType = (AutoCompleteTextView) findViewById(R.id.type);
+        mType.setAdapter(adapter);
         mSearch = (Button) findViewById(R.id.search);
+
         mSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mType = (EditText) findViewById(R.id.type);
                 String type = mType.getText().toString();
                 if (type.equals("")) {
                     final AlertDialog alertDialog = new AlertDialog.Builder(GoogleMapActivity.this).create();
@@ -85,7 +134,7 @@ public class GoogleMapActivity
                     });
                     alertDialog.show();
                 } else {
-                    TYPES = type;
+                    TYPE = type;
                     findNearest();
                 }
             }
@@ -113,9 +162,9 @@ public class GoogleMapActivity
         googlePlacesUrl.append("location=" + currentPosition.latitude + "," + currentPosition.longitude);
         googlePlacesUrl.append("&radius=" + PROXIMITY_RADIUS);
         if (Logger.ENABLED) {
-            Log.i(Logger.TAG, TYPES);
+            Log.i(Logger.TAG, TYPE);
         }
-        googlePlacesUrl.append("&types=" + TYPES);
+        googlePlacesUrl.append("&types=" + TYPE);
         googlePlacesUrl.append("&key=" + GOOGLE_BROWSER_KEY);
 
         Object[] toPass = new Object[2];

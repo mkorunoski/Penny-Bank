@@ -11,16 +11,6 @@
     tools:context="com.android.pennybank.activities.GoogleMapActivity">
 
 
-    <EditText
-        android:id="@+id/type"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_toLeftOf="@+id/search"
-        android:layout_toStartOf="@+id/search" />
-
     <Button
         android:id="@+id/search"
         android:layout_width="wrap_content"
@@ -28,7 +18,10 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:text="Search" />
+        android:width="64dp"
+        android:height="64dp"
+        android:background="@drawable/search_button"
+        android:clickable="true" />
 
     <fragment
         android:id="@+id/map"
@@ -36,5 +29,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/search" />
+
+    <AutoCompleteTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/type"
+        android:layout_above="@+id/map"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_toLeftOf="@+id/search"
+        android:layout_toStartOf="@+id/search" />
 
 </RelativeLayout>
