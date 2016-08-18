@@ -10,16 +10,14 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.android.pennybank.activities.GoogleMapActivity">
 
-
     <Button
         android:id="@+id/search"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:width="64dp"
-        android:height="64dp"
+        android:width="@dimen/button_size"
+        android:height="@dimen/button_size"
         android:background="@drawable/search_button"
         android:clickable="true" />
 
@@ -35,9 +33,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/type"
         android:layout_above="@+id/map"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_toLeftOf="@+id/search"
         android:layout_toStartOf="@+id/search" />
 
 </RelativeLayout>

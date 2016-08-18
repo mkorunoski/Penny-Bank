@@ -11,27 +11,24 @@
         android:id="@+id/product_name_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Product name:"
+        android:text="@string/product_name_colon"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <EditText
         android:id="@+id/product_name"
         android:layout_width="256dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/product_name_label"
-        android:layout_toLeftOf="@+id/choose_picture"
         android:layout_toStartOf="@+id/choose_picture" />
 
     <TextView
         android:id="@+id/product_price_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/product_name"
-        android:text="Product price:"
+        android:text="@string/product_price_colon"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <TextView
@@ -40,7 +37,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/product_price"
         android:layout_centerHorizontal="true"
-        android:text="Settings:"
+        android:text="@string/settings_colon"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <Spinner
@@ -67,10 +64,9 @@
         android:id="@+id/end_date_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/saving_method"
-        android:text="End date:"
+        android:text="@string/end_date_colon"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <TextView
@@ -78,19 +74,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
         android:layout_below="@+id/saving_method"
-        android:text="Deposit:"
+        android:text="@string/deposit_colon"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <EditText
         android:id="@+id/end_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/end_date_label"
-        android:layout_toLeftOf="@+id/save"
         android:layout_toStartOf="@+id/save"
         android:ems="10"
         android:focusableInTouchMode="false"
@@ -102,9 +95,7 @@
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/end_date"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
         android:layout_toEndOf="@+id/save"
-        android:layout_toRightOf="@+id/save"
         android:ems="10"
         android:inputType="number" />
 
@@ -113,9 +104,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignEnd="@+id/end_date"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_alignRight="@+id/end_date"
         android:layout_below="@+id/product_price_label"
         android:ems="10"
         android:inputType="number" />
@@ -126,8 +115,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/deposit"
         android:layout_centerHorizontal="true"
-        android:width="64dp"
-        android:height="64dp"
+        android:width="@dimen/button_size"
+        android:height="@dimen/button_size"
         android:background="@drawable/save_button"
         android:clickable="true" />
 
@@ -136,9 +125,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:width="64dp"
-        android:height="64dp"
+        android:width="@dimen/button_size"
+        android:height="@dimen/button_size"
         android:background="@drawable/gallery_button"
         android:clickable="true" />
 
@@ -148,8 +136,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_below="@+id/save"
-        android:width="64dp"
-        android:height="64dp"
+        android:width="@dimen/button_size"
+        android:height="@dimen/button_size"
         android:background="@drawable/back_button"
         android:clickable="true" />
 </RelativeLayout>

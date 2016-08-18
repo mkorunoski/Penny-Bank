@@ -20,8 +20,8 @@
         android:layout_above="@+id/space"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center_horizontal"
-        android:width="64dp"
-        android:height="64dp"
+        android:width="@dimen/button_size"
+        android:height="@dimen/button_size"
         android:background="@drawable/new_saving_button"
         android:clickable="true" />
 
@@ -31,8 +31,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/space"
         android:layout_centerHorizontal="true"
-        android:width="64dp"
-        android:height="64dp"
+        android:width="@dimen/button_size"
+        android:height="@dimen/button_size"
         android:background="@drawable/view_savings_button"
         android:clickable="true" />
 
@@ -49,9 +49,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:width="64dp"
-        android:height="64dp"
+        android:width="@dimen/button_size"
+        android:height="@dimen/button_size"
         android:background="@drawable/play_button"
         android:clickable="true" />
 
@@ -60,10 +59,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:width="64dp"
-        android:height="64dp"
+        android:width="@dimen/button_size"
+        android:height="@dimen/button_size"
         android:background="@drawable/map_button"
         android:clickable="true" />
 
