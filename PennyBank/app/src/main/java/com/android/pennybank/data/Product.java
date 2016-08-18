@@ -329,9 +329,9 @@ public class Product {
     }
 
     // "MS" suffix stands for milliseconds.
-    private final long TO_DAYS_MS = 1000L * 60 * 60 * 24;
-    private final long TO_WEEKS_MS = TO_DAYS_MS * 7;
-    private final long TO_MONTHS_MS = TO_WEEKS_MS * 12;
+    private final long DAY_IN_MS = 1000L * 60 * 60 * 24;
+    private final long WEEK_IN_MS = DAY_IN_MS * 7;
+    private final long MONTH_IN_MS = WEEK_IN_MS * 4;
 
     private void calcDeposit() {
         long timeDifferenceMS = endDate.getTimeInMillis() - startDate.getTimeInMillis();
@@ -340,28 +340,28 @@ public class Product {
 
         switch (depositFrequency) {
             case DAILY: {
-                if (timeDifferenceMS <= TO_DAYS_MS) {
+                if (timeDifferenceMS <= DAY_IN_MS) {
                     deposit = balance;
                 } else {
-                    int days = (int) (timeDifferenceMS / TO_DAYS_MS);
+                    int days = (int) (timeDifferenceMS / DAY_IN_MS);
                     deposit = balance / days;
                 }
                 break;
             }
             case WEEKLY: {
-                if (timeDifferenceMS <= TO_WEEKS_MS) {
+                if (timeDifferenceMS <= WEEK_IN_MS) {
                     deposit = balance;
                 } else {
-                    int weeks = (int) (timeDifferenceMS / TO_WEEKS_MS);
+                    int weeks = (int) (timeDifferenceMS / WEEK_IN_MS);
                     deposit = balance / weeks;
                 }
                 break;
             }
             case MONTHLY: {
-                if (timeDifferenceMS <= TO_MONTHS_MS) {
+                if (timeDifferenceMS <= MONTH_IN_MS) {
                     deposit = balance;
                 } else {
-                    int months = (int) (timeDifferenceMS / TO_MONTHS_MS);
+                    int months = (int) (timeDifferenceMS / MONTH_IN_MS);
                     deposit = balance / months;
                 }
                 break;

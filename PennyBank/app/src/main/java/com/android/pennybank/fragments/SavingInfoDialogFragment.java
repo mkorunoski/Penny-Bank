@@ -157,7 +157,10 @@ public class SavingInfoDialogFragment extends DialogFragment {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 int oldPrice = mProduct.getPrice();
-                int newPrice = Integer.parseInt(mProductPrice.getText().toString());
+                int newPrice = 0;
+                if (!mProductPrice.getText().toString().equals("")) {
+                    newPrice = Integer.parseInt(mProductPrice.getText().toString());
+                }
                 if (oldPrice != newPrice) {
                     mProduct.setPrice(newPrice);
                     update();
@@ -183,7 +186,10 @@ public class SavingInfoDialogFragment extends DialogFragment {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 int oldSavings = mProduct.getSavings();
-                int newSavings = Integer.parseInt(mSavings.getText().toString());
+                int newSavings = 0;
+                if (!mSavings.getText().toString().equals("")) {
+                    newSavings = Integer.parseInt(mSavings.getText().toString());
+                }
                 if (oldSavings != newSavings) {
                     mProduct.setSavings(newSavings);
                     update();
@@ -237,7 +243,10 @@ public class SavingInfoDialogFragment extends DialogFragment {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 int oldDeposit = mProduct.getDeposit();
-                int newDeposit = Integer.parseInt(mDeposit.getText().toString());
+                int newDeposit = 0;
+                if (!mDeposit.getText().toString().equals("")) {
+                    newDeposit = Integer.parseInt(mDeposit.getText().toString());
+                }
                 if (oldDeposit != newDeposit) {
                     mProduct.setDeposit(newDeposit);
                     update();
