@@ -1,12 +1,14 @@
 package com.android.pennybank.fragments;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.app.DialogFragment;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.app.DialogFragment;
 import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -113,6 +115,7 @@ public class SavingInfoDialogFragment extends DialogFragment {
     }
 
     private void updateEditTexts() {
+        mProductName.setText(mProduct.getName());
         mProductPrice.setText(String.valueOf(mProduct.getPrice()));
         mDepositFrequency.setSelection(mProduct.getDepositFrequency().getValue());
         mSavings.setText(String.valueOf(mProduct.getSavings()));
@@ -126,6 +129,30 @@ public class SavingInfoDialogFragment extends DialogFragment {
     private Calendar calendar = Calendar.getInstance();
 
     private void setListeners() {
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        final View view = inflater.inflate(R.layout.dialog_change_product_name, null);
+        final TextView newProductName = (TextView) view.findViewById(R.id.new_product_name);
+        final AlertDialog newProductNameAlertDialog = new AlertDialog.Builder(getActivity()).create();
+        newProductNameAlertDialog.setTitle("New product name");
+        newProductNameAlertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Set",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        String newName = newProductName.getText().toString();
+                        if (!newName.equals("")) {
+                            mProduct.setName(newName);
+                            update();
+                        }
+                        newProductNameAlertDialog.dismiss();
+                    }
+                });
+        newProductNameAlertDialog.setView(view);
+        mProductName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                newProductNameAlertDialog.show();
+            }
+        });
+
         mProductPrice.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -133,8 +160,7 @@ public class SavingInfoDialogFragment extends DialogFragment {
                 int newPrice = Integer.parseInt(mProductPrice.getText().toString());
                 if (oldPrice != newPrice) {
                     mProduct.setPrice(newPrice);
-                    ProductDatabaseWrapper.updateProduct(mProduct);
-                    updateEditTexts();
+                    update();
                 }
             }
         });
@@ -144,8 +170,7 @@ public class SavingInfoDialogFragment extends DialogFragment {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (Product.DEPOSIT_FREQUENCY.fromValue(position) != mProduct.getDepositFrequency()) {
                     mProduct.setDepositFrequency(Product.DEPOSIT_FREQUENCY.fromValue(position));
-                    ProductDatabaseWrapper.updateProduct(mProduct);
-                    updateEditTexts();
+                    update();
                 }
             }
 
@@ -161,8 +186,7 @@ public class SavingInfoDialogFragment extends DialogFragment {
                 int newSavings = Integer.parseInt(mSavings.getText().toString());
                 if (oldSavings != newSavings) {
                     mProduct.setSavings(newSavings);
-                    ProductDatabaseWrapper.updateProduct(mProduct);
-                    updateEditTexts();
+                    update();
                 }
             }
         });
@@ -172,8 +196,7 @@ public class SavingInfoDialogFragment extends DialogFragment {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (Product.SAVING_METHOD.fromValue(position) != mProduct.getSavingMethod()) {
                     mProduct.setSavingMethod(Product.SAVING_METHOD.fromValue(position));
-                    ProductDatabaseWrapper.updateProduct(mProduct);
-                    updateEditTexts();
+                    update();
                     setEnabledBySavingMethod();
                 }
             }
@@ -191,8 +214,7 @@ public class SavingInfoDialogFragment extends DialogFragment {
                 calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
                 if (calendar.getTimeInMillis() != mProduct.getEndDate().getTimeInMillis()) {
                     mProduct.setEndDate(calendar);
-                    ProductDatabaseWrapper.updateProduct(mProduct);
-                    updateEditTexts();
+                    update();
                 }
             }
         };
@@ -218,8 +240,7 @@ public class SavingInfoDialogFragment extends DialogFragment {
                 int newDeposit = Integer.parseInt(mDeposit.getText().toString());
                 if (oldDeposit != newDeposit) {
                     mProduct.setDeposit(newDeposit);
-                    ProductDatabaseWrapper.updateProduct(mProduct);
-                    updateEditTexts();
+                    update();
                 }
             }
         });
@@ -235,8 +256,7 @@ public class SavingInfoDialogFragment extends DialogFragment {
                         calendar.set(Calendar.MINUTE, selectedMinute);
                         if (calendar.getTimeInMillis() != mProduct.getReminderTime().getTimeInMillis()) {
                             mProduct.setReminderTime(calendar);
-                            ProductDatabaseWrapper.updateProduct(mProduct);
-                            updateEditTexts();
+                            update();
                         }
                     }
                 }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true);
@@ -251,6 +271,11 @@ public class SavingInfoDialogFragment extends DialogFragment {
                 setEnabledEditableFields(isChecked);
             }
         });
+    }
+
+    private void update() {
+        ProductDatabaseWrapper.updateProduct(mProduct);
+        updateEditTexts();
     }
 
     private void setEnabledBySavingMethod() {
