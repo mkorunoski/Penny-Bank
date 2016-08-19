@@ -7,6 +7,7 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.InputType;
@@ -75,11 +76,11 @@ public class SavingInfoDialogFragment extends DialogFragment {
         mDeposit = (EditText) view.findViewById(R.id.deposit);
         mReminderTime = (EditText) view.findViewById(R.id.reminder_time);
         ArrayAdapter<CharSequence> adapter;
-        adapter = ArrayAdapter.createFromResource(context, R.array.deposit_frequency, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        adapter = ArrayAdapter.createFromResource(context, R.array.deposit_frequency, android.R.layout.simple_spinner_dropdown_item);
+        adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         mDepositFrequency.setAdapter(adapter);
         adapter = ArrayAdapter.createFromResource(context, R.array.saving_method, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         mSavingMethod.setAdapter(adapter);
         Bitmap bitmap = ProductDatabaseWrapper.mBitmaps.get(mProduct.getId());
         if (bitmap == null) {

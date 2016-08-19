@@ -88,11 +88,11 @@ public class NewSavingFormFragment extends Fragment {
         mDepositFrequency = (Spinner) view.findViewById(R.id.deposit_frequency);
         ArrayAdapter<CharSequence> adapter;
         adapter = ArrayAdapter.createFromResource(context, R.array.deposit_frequency, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         mDepositFrequency.setAdapter(adapter);
         mSavingMethod = (Spinner) view.findViewById(R.id.saving_method);
         adapter = ArrayAdapter.createFromResource(context, R.array.saving_method, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         mSavingMethod.setAdapter(adapter);
         mEndDate = (EditText) view.findViewById(R.id.end_date);
         mEndDateLabel = (TextView) view.findViewById(R.id.end_date_label);
